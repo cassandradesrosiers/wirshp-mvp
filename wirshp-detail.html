@@ -701,13 +701,177 @@ footer {
 .fade-up:nth-child(2) { animation-delay: 0.10s; }
 .fade-up:nth-child(3) { animation-delay: 0.15s; }
 .fade-up:nth-child(4) { animation-delay: 0.20s; }
+
+/* ── PRE-VISIT PREP MODAL ── */
+.pv-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(13,15,26,0.55);
+  backdrop-filter: blur(10px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+.pv-overlay.open { opacity: 1; pointer-events: all; }
+
+.pv-modal {
+  background: var(--white); border-radius: 28px;
+  width: 100%; max-width: 640px;
+  box-shadow: 0 32px 80px rgba(13,15,26,0.22);
+  overflow: hidden;
+  transform: translateY(24px) scale(0.98);
+  transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+.pv-overlay.open .pv-modal { transform: translateY(0) scale(1); }
+
+/* Church hero strip */
+.pv-hero {
+  position: relative; height: 160px; overflow: hidden;
+}
+.pv-hero img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.pv-hero::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to bottom, rgba(13,15,26,0.1), rgba(13,15,26,0.65));
+}
+.pv-hero-text {
+  position: absolute; bottom: 18px; left: 24px; right: 24px; z-index: 1;
+  display: flex; align-items: flex-end; justify-content: space-between;
+}
+.pv-church-name {
+  font-family: var(--font-display); font-size: 26px; letter-spacing: 0.02em;
+  color: white; line-height: 1;
+}
+.pv-hero-badge {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 9999px; padding: 5px 12px;
+  font-size: 12px; font-weight: 600; color: white;
+}
+.pv-hero-dot { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; animation: pvPulse 2s infinite; }
+@keyframes pvPulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* Body */
+.pv-body { padding: 24px 28px 28px; }
+
+.pv-intro {
+  font-size: 15px; color: var(--ink-soft); line-height: 1.7;
+  margin-bottom: 22px; padding-bottom: 22px;
+  border-bottom: 1px solid var(--border);
+}
+.pv-intro strong { color: var(--dark); }
+
+/* Prep grid */
+.pv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 22px; }
+.pv-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 16px;
+}
+.pv-card-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 10px; font-size: 18px;
+}
+.pv-card-label {
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px;
+}
+.pv-card-value {
+  font-size: 14px; font-weight: 600; color: var(--dark); line-height: 1.4;
+}
+.pv-card-sub { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.5; }
+
+/* Reassurance strip */
+.pv-reassure {
+  background: linear-gradient(135deg, #0D0F1A, #1a2545);
+  border-radius: 16px; padding: 18px 20px;
+  display: flex; gap: 14px; align-items: flex-start;
+  margin-bottom: 22px; position: relative; overflow: hidden;
+}
+.pv-reassure::before {
+  content: ''; position: absolute;
+  width: 200px; height: 200px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(27,79,216,0.3), transparent 70%);
+  top: -60px; right: -40px; pointer-events: none;
+}
+.pv-reassure-icon {
+  font-size: 28px; flex-shrink: 0; margin-top: 2px;
+}
+.pv-reassure-text {
+  font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.7;
+}
+.pv-reassure-text strong { color: white; display: block; margin-bottom: 3px; font-size: 14px; }
+
+/* Date picker row */
+.pv-date-row {
+  display: flex; gap: 8px; margin-bottom: 22px;
+}
+.pv-date-opt {
+  flex: 1; padding: 12px; border: 1.5px solid var(--border);
+  border-radius: 14px; text-align: center; cursor: pointer;
+  transition: border-color 0.18s, background 0.18s;
+  background: var(--surface);
+}
+.pv-date-opt:hover { border-color: var(--cobalt-light); background: var(--cobalt-pale); }
+.pv-date-opt.selected { border-color: var(--cobalt); background: var(--cobalt-pale); }
+.pv-date-day { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+.pv-date-date { font-size: 18px; font-weight: 700; color: var(--dark); margin-bottom: 2px; }
+.pv-date-time { font-size: 11px; color: var(--cobalt); font-weight: 600; }
+
+/* Actions */
+.pv-actions { display: flex; gap: 10px; }
+.pv-confirm {
+  flex: 1; height: 52px; border-radius: 9999px;
+  background: var(--cobalt); color: white; border: none;
+  font-family: var(--font-body); font-size: 15px; font-weight: 700;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+  box-shadow: 0 4px 20px rgba(27,79,216,0.3);
+  transition: background 0.2s, transform 0.15s;
+}
+.pv-confirm:hover { background: #2952CC; transform: translateY(-1px); }
+.pv-cancel {
+  height: 52px; padding: 0 22px; border-radius: 9999px;
+  background: none; color: var(--muted); border: 1.5px solid var(--border);
+  font-family: var(--font-body); font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: background 0.15s;
+}
+.pv-cancel:hover { background: var(--surface); }
+
+/* Confirmed state */
+.pv-confirmed {
+  text-align: center; padding: 32px 24px 28px;
+}
+.pv-confirmed-icon {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: rgba(77,124,95,0.1); border: 2px solid rgba(77,124,95,0.25);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; margin: 0 auto 16px;
+}
+.pv-confirmed-title {
+  font-family: var(--font-display); font-size: 36px; letter-spacing: 0.02em;
+  color: var(--dark); margin-bottom: 8px;
+}
+.pv-confirmed-sub {
+  font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 22px;
+}
+.pv-to-dash {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 28px; border-radius: 9999px;
+  background: var(--cobalt); color: white; border: none;
+  font-family: var(--font-body); font-size: 14px; font-weight: 700;
+  cursor: pointer; box-shadow: 0 4px 18px rgba(27,79,216,0.28);
+  transition: background 0.15s;
+}
+.pv-to-dash:hover { background: #2952CC; }
 </style>
 </head>
 <body>
 
 <!-- ── NAV ── -->
 <nav>
-  <div class="nav-logo">WIRSHP</div>
+  <div class="nav-logo" onclick="window.location.href='wirshp-homepage.html'" style="cursor:pointer">WIRSHP</div>
   <div class="nav-search">
     <div class="nav-field">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -730,12 +894,12 @@ footer {
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
       Visits
     </div>
-    <button class="btn-primary">Sign Up</button>
+    <button class="btn-primary" onclick="window.location.href='wirshp-auth.html'">Sign Up</button>
   </div>
 </nav>
 
 <!-- ── BACK ── -->
-<div class="back-bar">
+<div class="back-bar" onclick="window.location.href='wirshp-search.html'" style="cursor:pointer">
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
   Back to results
 </div>
@@ -1031,7 +1195,7 @@ footer {
           <div>(617) 555-0192</div>
         </div>
       </div>
-      <button class="plan-visit-btn" onclick="window.location.href='wirshp-previsit.html'">Plan A Visit</button>
+      <button class="plan-visit-btn">Plan A Visit</button>
       <p class="visit-note">Let the church know you're coming. Takes 60 seconds.</p>
     </div>
 
@@ -1217,6 +1381,137 @@ footer {
   </div>
 </footer>
 
+<!-- ── PRE-VISIT PREP MODAL ── -->
+<div class="pv-overlay" id="pvOverlay">
+  <div class="pv-modal" id="pvModal">
+
+    <!-- Step 1: Prep info -->
+    <div id="pvStep1">
+      <div class="pv-hero">
+        <img src="https://images.unsplash.com/photo-1519817914152-22d216bb9170?w=800&q=80&fit=crop" alt="Blessed Hope Tabernacle">
+        <div class="pv-hero-text">
+          <div class="pv-church-name">Blessed Hope Tabernacle</div>
+          <div class="pv-hero-badge"><div class="pv-hero-dot"></div>Open this Sunday</div>
+        </div>
+      </div>
+
+      <div class="pv-body">
+        <div class="pv-intro">
+          <strong>You're about to take a real step.</strong> Here's everything you need to walk through the door feeling prepared — and welcome.
+        </div>
+
+        <!-- Pick a service -->
+        <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Which service?</div>
+        <div class="pv-date-row">
+          <div class="pv-date-opt selected" onclick="selectDate(this)">
+            <div class="pv-date-day">Sun</div>
+            <div class="pv-date-date">Mar 2</div>
+            <div class="pv-date-time">10:30 AM</div>
+          </div>
+          <div class="pv-date-opt" onclick="selectDate(this)">
+            <div class="pv-date-day">Sun</div>
+            <div class="pv-date-date">Mar 2</div>
+            <div class="pv-date-time">8:00 AM</div>
+          </div>
+          <div class="pv-date-opt" onclick="selectDate(this)">
+            <div class="pv-date-day">Sun</div>
+            <div class="pv-date-date">Mar 9</div>
+            <div class="pv-date-time">10:30 AM</div>
+          </div>
+          <div class="pv-date-opt" onclick="selectDate(this)">
+            <div class="pv-date-day">Sun</div>
+            <div class="pv-date-date">Mar 9</div>
+            <div class="pv-date-time">8:00 AM</div>
+          </div>
+        </div>
+
+        <!-- Prep cards -->
+        <div class="pv-grid">
+          <div class="pv-card">
+            <div class="pv-card-icon" style="background:#EEF4FF">📍</div>
+            <div class="pv-card-label">Getting There</div>
+            <div class="pv-card-value">80 L Street, South Boston</div>
+            <div class="pv-card-sub">Dedicated free lot on-site. Street parking on L St also available.</div>
+          </div>
+          <div class="pv-card">
+            <div class="pv-card-icon" style="background:#F0FDF4">👗</div>
+            <div class="pv-card-label">What to Wear</div>
+            <div class="pv-card-value">Come as you are</div>
+            <div class="pv-card-sub">You'll see everything from casual jeans to Sunday dress. No dress code here.</div>
+          </div>
+          <div class="pv-card">
+            <div class="pv-card-icon" style="background:#FFF7ED">⏱️</div>
+            <div class="pv-card-label">How Long</div>
+            <div class="pv-card-value">About 90 minutes</div>
+            <div class="pv-card-sub">Worship, announcements, message. No pressure to stay after.</div>
+          </div>
+          <div class="pv-card">
+            <div class="pv-card-icon" style="background:#FDF4FF">🙌</div>
+            <div class="pv-card-label">The Vibe</div>
+            <div class="pv-card-value">Expressive & warm</div>
+            <div class="pv-card-sub">Hands raised, people singing. Participate as much or as little as you like.</div>
+          </div>
+          <div class="pv-card">
+            <div class="pv-card-icon" style="background:#F0F9FF">👶</div>
+            <div class="pv-card-label">Bringing Kids?</div>
+            <div class="pv-card-value">Children's church available</div>
+            <div class="pv-card-sub">Check-in desk just inside the main entrance. Ages 2–12.</div>
+          </div>
+          <div class="pv-card">
+            <div class="pv-card-icon" style="background:#FFF1F2">👋</div>
+            <div class="pv-card-label">When You Arrive</div>
+            <div class="pv-card-value">Look for a greeter at the door</div>
+            <div class="pv-card-sub">Tell them it's your first time. They'll take care of you from there.</div>
+          </div>
+        </div>
+
+        <!-- Reassurance -->
+        <div class="pv-reassure">
+          <div class="pv-reassure-icon">🙏</div>
+          <div class="pv-reassure-text">
+            <strong>It's okay to feel nervous.</strong>
+            Most first-time visitors do. You don't have to introduce yourself, raise your hand, or make any commitments. Just show up — that's the whole step.
+          </div>
+        </div>
+
+        <div class="pv-actions">
+          <button class="pv-cancel" onclick="closePV()">Not yet</button>
+          <button class="pv-confirm" onclick="confirmVisit()">
+            I'm planning to visit
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Confirmed -->
+    <div id="pvStep2" style="display:none">
+      <div class="pv-hero">
+        <img src="https://images.unsplash.com/photo-1519817914152-22d216bb9170?w=800&q=80&fit=crop" alt="Blessed Hope Tabernacle">
+        <div class="pv-hero-text">
+          <div class="pv-church-name">Blessed Hope Tabernacle</div>
+          <div class="pv-hero-badge"><div class="pv-hero-dot"></div>Visit planned</div>
+        </div>
+      </div>
+      <div class="pv-confirmed">
+        <div class="pv-confirmed-icon">✓</div>
+        <div class="pv-confirmed-title">You're on your way.</div>
+        <div class="pv-confirmed-sub">
+          Your visit to <strong>Blessed Hope Tabernacle</strong> on <strong id="confirmedDate">Sunday, Mar 2 at 10:30 AM</strong> has been saved to your dashboard. We'll remind you the day before — and the church has been notified a first-time visitor is coming.
+        </div>
+        <button class="pv-to-dash" onclick="window.location.href='wirshp-dashboard.html'">
+          Go to My Dashboard
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+        </button>
+        <div style="margin-top:14px;">
+          <a onclick="closePV()" style="font-size:13px;color:var(--muted);cursor:pointer;">Stay on this page</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <script>
   // Heart toggle
   document.getElementById('heroHeart').addEventListener('click', function() {
@@ -1252,6 +1547,37 @@ footer {
       e.stopPropagation();
       heart.classList.toggle('saved');
     });
+  });
+
+  // ── Pre-visit prep modal ──
+  function openPV() {
+    document.getElementById('pvOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closePV() {
+    document.getElementById('pvOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function selectDate(el) {
+    document.querySelectorAll('.pv-date-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+  function confirmVisit() {
+    const selected = document.querySelector('.pv-date-opt.selected');
+    const day = selected.querySelector('.pv-date-day').textContent;
+    const date = selected.querySelector('.pv-date-date').textContent;
+    const time = selected.querySelector('.pv-date-time').textContent;
+    document.getElementById('confirmedDate').textContent = `${day}, Mar ${date.replace('Mar ','')} at ${time}`;
+    document.getElementById('pvStep1').style.display = 'none';
+    document.getElementById('pvStep2').style.display = 'block';
+  }
+
+  // Wire up Plan a Visit button
+  document.querySelector('.plan-visit-btn').addEventListener('click', openPV);
+
+  // Close on overlay click
+  document.getElementById('pvOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closePV();
   });
 </script>
 </body>
