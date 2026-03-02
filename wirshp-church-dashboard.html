@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Church Dashboard — wirshp</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cobalt:       #1B4FD8;
+  --cobalt-mid:   #2952CC;
+  --cobalt-pale:  #EEF4FF;
+  --cobalt-light: #93C5FD;
+  --teal:         #0891B2;
+  --sage:         #4D7C5F;
+  --sage-pale:    #E8F5EC;
+  --amber:        #D97706;
+  --amber-pale:   #FFFBEB;
+  --rose:         #BE185D;
+  --violet:       #7C3AED;
+  --dark:         #0D0F1A;
+  --ink:          #1A1D2E;
+  --ink-soft:     #374151;
+  --muted:        #6B7280;
+  --muted-light:  #9CA3AF;
+  --border:       #E5E9F0;
+  --border-soft:  #F1F4F9;
+  --surface:      #F7F9FC;
+  --canvas:       #F2F5FA;
+  --white:        #FFFFFF;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+  --radius-pill:  9999px;
+  --sidebar-w:    256px;
+  --shadow-xs:    0 1px 4px rgba(13,15,26,0.06);
+  --shadow-sm:    0 2px 12px rgba(13,15,26,0.07);
+  --shadow-md:    0 4px 24px rgba(13,15,26,0.09);
+  --shadow-lg:    0 16px 48px rgba(13,15,26,0.14);
+}
+
+html, body { height: 100%; font-family: var(--font-body); background: var(--canvas); color: var(--ink); -webkit-font-smoothing: antialiased; overflow: hidden; }
+
+/* ─── SHELL ─── */
+.shell { display: grid; grid-template-columns: var(--sidebar-w) 1fr; height: 100vh; overflow: hidden; }
+
+/* ─── SIDEBAR ─── */
+.sidebar { background: var(--dark); display: flex; flex-direction: column; overflow: hidden; position: relative; }
+.sidebar::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 200px 200px at 80% 10%, rgba(27,79,216,0.2) 0%, transparent 70%),
+              radial-gradient(ellipse 150px 150px at 20% 80%, rgba(8,145,178,0.15) 0%, transparent 70%);
+}
+
+.sidebar-logo { padding: 28px 22px 22px; font-family: var(--font-display); font-size: 24px; letter-spacing: 0.08em; color: white; border-bottom: 1px solid rgba(255,255,255,0.06); flex-shrink: 0; position: relative; }
+
+/* Church profile mini */
+.sidebar-church { padding: 16px 16px 12px; position: relative; flex-shrink: 0; }
+.sidebar-church-thumb { width: 44px; height: 44px; border-radius: 10px; overflow: hidden; margin-bottom: 10px; }
+.sidebar-church-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.sidebar-church-name { font-size: 14px; font-weight: 700; color: white; margin-bottom: 2px; }
+.sidebar-church-status { display: flex; align-items: center; gap: 6px; font-size: 11px; color: rgba(255,255,255,0.45); }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sage); }
+
+/* Tier chip in sidebar */
+.sidebar-tier {
+  margin: 0 16px 16px;
+  background: rgba(217,119,6,0.12); border: 1px solid rgba(217,119,6,0.25);
+  border-radius: 10px; padding: 10px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: relative; cursor: pointer;
+}
+.sidebar-tier-name { font-size: 12px; font-weight: 700; color: var(--amber); letter-spacing: 0.05em; }
+.sidebar-tier-cta { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.4); }
+.sidebar-tier:hover .sidebar-tier-cta { color: white; }
+
+/* Nav */
+.nav-section-label { font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.25); letter-spacing: 0.14em; text-transform: uppercase; padding: 10px 22px 6px; position: relative; }
+.nav-items { display: flex; flex-direction: column; gap: 2px; padding: 0 10px; position: relative; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 10px;
+  font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.45);
+  cursor: pointer; transition: background 0.15s, color 0.15s;
+  border: none; background: none; width: 100%; text-align: left;
+}
+.nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.8); }
+.nav-item.active { background: rgba(27,79,216,0.25); color: white; font-weight: 600; }
+.nav-item svg { flex-shrink: 0; opacity: 0.7; }
+.nav-item.active svg { opacity: 1; }
+.nav-badge { margin-left: auto; background: var(--cobalt); color: white; font-size: 10px; font-weight: 700; border-radius: var(--radius-pill); padding: 1px 7px; }
+.nav-badge.alert { background: var(--rose); animation: alertPulse 2s infinite; }
+@keyframes alertPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(190,24,93,0); } 50% { box-shadow: 0 0 0 4px rgba(190,24,93,0.2); } }
+
+.nav-item.locked { opacity: 0.4; cursor: not-allowed; }
+.lock-icon { margin-left: auto; font-size: 11px; }
+
+/* Sidebar user */
+.sidebar-user { margin-top: auto; padding: 14px 16px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 12px; flex-shrink: 0; position: relative; }
+.user-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--cobalt), var(--teal)); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; flex-shrink: 0; }
+.user-name { font-size: 13px; font-weight: 600; color: white; }
+.user-role { font-size: 11px; color: rgba(255,255,255,0.35); }
+.user-menu { margin-left: auto; color: rgba(255,255,255,0.3); background: none; border: none; cursor: pointer; padding: 4px; border-radius: 6px; transition: color 0.15s; }
+.user-menu:hover { color: white; }
+
+/* ─── MAIN ─── */
+.main { display: flex; flex-direction: column; overflow: hidden; }
+
+/* Topbar */
+.topbar { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 40px; height: 60px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.topbar-greeting { font-size: 14px; font-weight: 500; color: var(--ink-soft); }
+.topbar-greeting strong { color: var(--ink); }
+.topbar-actions { display: flex; align-items: center; gap: 10px; }
+.topbar-btn { display: flex; align-items: center; gap: 7px; padding: 8px 18px; border-radius: var(--radius-pill); font-family: var(--font-body); font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: background 0.15s, transform 0.1s; }
+.topbar-btn-primary { background: var(--cobalt); color: white; box-shadow: 0 2px 10px rgba(27,79,216,0.25); }
+.topbar-btn-primary:hover { background: var(--cobalt-mid); transform: translateY(-1px); }
+.topbar-btn-ghost { background: var(--surface); color: var(--ink-soft); border: 1px solid var(--border); }
+.topbar-btn-ghost:hover { background: var(--border-soft); }
+
+/* Alert bell */
+.alert-bell { position: relative; width: 38px; height: 38px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--muted); transition: background 0.15s; }
+.alert-bell:hover { background: var(--border-soft); }
+.alert-pip { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background: var(--rose); border: 2px solid var(--white); border-radius: 50%; }
+
+/* Scroll area */
+.scroll-area { flex: 1; overflow-y: auto; padding: 32px 40px 64px; }
+.scroll-area::-webkit-scrollbar { width: 5px; }
+.scroll-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+/* ─── PAGES ─── */
+.page { display: none; }
+.page.visible { display: block; animation: fadeUp 0.38s ease both; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+
+/* ─── SECTION HEADERS ─── */
+.section-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.section-title { font-family: var(--font-display); font-size: 30px; letter-spacing: 0.02em; color: var(--dark); }
+.section-link { font-size: 13px; font-weight: 600; color: var(--cobalt); cursor: pointer; background: none; border: none; transition: opacity 0.2s; }
+.section-link:hover { opacity: 0.7; }
+.dash-section { margin-bottom: 36px; }
+
+/* ─── METRICS STRIP ─── */
+.metrics-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 36px; }
+.metric-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 20px 22px; box-shadow: var(--shadow-xs); position: relative; overflow: hidden; }
+.metric-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 3px 3px 0 0; }
+.metric-card.cobalt::after { background: var(--cobalt); }
+.metric-card.teal::after { background: var(--teal); }
+.metric-card.sage::after { background: var(--sage); }
+.metric-card.amber::after { background: var(--amber); }
+.metric-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+.metric-value { font-family: var(--font-display); font-size: 40px; letter-spacing: 0.02em; color: var(--dark); line-height: 1; margin-bottom: 6px; }
+.metric-delta { font-size: 12px; font-weight: 600; }
+.metric-delta.up { color: var(--sage); }
+.metric-delta.neutral { color: var(--muted); }
+.metric-locked { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted-light); margin-top: 8px; cursor: pointer; }
+.metric-locked:hover { color: var(--amber); }
+
+/* ─── VISITOR ALERTS ─── */
+.alert-card {
+  background: var(--white); border: 1px solid var(--border); border-radius: 16px;
+  overflow: hidden; box-shadow: var(--shadow-xs);
+  transition: box-shadow 0.2s;
+}
+.alert-card + .alert-card { margin-top: 10px; }
+.alert-card:hover { box-shadow: var(--shadow-md); }
+
+.alert-header {
+  display: flex; align-items: center; gap: 14px;
+  padding: 18px 20px; border-bottom: 1px solid var(--border-soft);
+}
+.alert-avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--cobalt-pale), #E0EAFF);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 18px; color: var(--cobalt);
+  flex-shrink: 0; border: 2px solid rgba(27,79,216,0.15);
+}
+.alert-name { font-size: 15px; font-weight: 700; color: var(--dark); margin-bottom: 2px; }
+.alert-meta { font-size: 12px; color: var(--muted); }
+.alert-timing {
+  margin-left: auto; text-align: right; flex-shrink: 0;
+}
+.alert-when {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 700; color: var(--cobalt);
+  background: var(--cobalt-pale); border-radius: var(--radius-pill); padding: 4px 12px;
+  margin-bottom: 4px;
+}
+.alert-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cobalt); animation: alertPip 1.8s infinite; }
+@keyframes alertPip { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+.alert-service { font-size: 11px; color: var(--muted); }
+
+.alert-body { padding: 16px 20px; }
+.seeker-signals { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.signal-tag {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 600; color: var(--ink-soft);
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-pill); padding: 4px 11px;
+}
+.signal-tag svg { color: var(--cobalt); }
+
+.alert-context { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 16px; font-style: italic; border-left: 3px solid var(--cobalt-pale); padding-left: 12px; }
+
+.alert-actions { display: flex; gap: 8px; }
+.alert-btn {
+  display: flex; align-items: center; gap: 6px; padding: 9px 18px;
+  border-radius: var(--radius-pill); font-family: var(--font-body); font-size: 12px; font-weight: 700;
+  cursor: pointer; border: none; transition: background 0.15s, transform 0.1s;
+}
+.alert-btn-primary { background: var(--cobalt); color: white; box-shadow: 0 2px 8px rgba(27,79,216,0.2); }
+.alert-btn-primary:hover { background: var(--cobalt-mid); }
+.alert-btn-ghost { background: var(--surface); color: var(--ink-soft); border: 1px solid var(--border); }
+.alert-btn-ghost:hover { background: var(--border-soft); }
+.alert-btn-done { background: var(--sage-pale); color: var(--sage); border: 1px solid rgba(77,124,95,0.2); cursor: default; }
+
+/* Gated alert */
+.alert-gate {
+  background: var(--white); border: 1px solid var(--border); border-radius: 16px;
+  padding: 24px; display: flex; align-items: center; gap: 16px;
+  box-shadow: var(--shadow-xs); margin-top: 10px;
+}
+.alert-gate-blur { flex: 1; filter: blur(4px); opacity: 0.4; pointer-events: none; }
+.alert-gate-blur .alert-name { background: var(--border); border-radius: 4px; color: transparent; width: 120px; height: 16px; }
+.alert-gate-cta { flex-shrink: 0; }
+.gate-label { font-size: 12px; font-weight: 700; color: var(--amber); margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
+.gate-btn { display: flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: var(--radius-pill); background: var(--amber); color: white; border: none; font-family: var(--font-body); font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background 0.15s; }
+.gate-btn:hover { background: #B45309; }
+
+/* ─── ANALYTICS ─── */
+.chart-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; box-shadow: var(--shadow-xs); }
+.chart-title { font-size: 15px; font-weight: 700; color: var(--dark); margin-bottom: 18px; }
+
+/* Simple bar chart */
+.bar-chart { display: flex; align-items: flex-end; gap: 6px; height: 120px; }
+.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.bar { width: 100%; background: var(--cobalt-pale); border-radius: 4px 4px 0 0; transition: background 0.2s; position: relative; overflow: hidden; }
+.bar:hover { background: var(--cobalt-light); }
+.bar-fill { position: absolute; bottom: 0; left: 0; right: 0; background: var(--cobalt); border-radius: 4px 4px 0 0; }
+.bar-label { font-size: 10px; color: var(--muted); font-weight: 500; }
+
+/* Sentiment donut (CSS only) */
+.sentiment-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.sentiment-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 20px; box-shadow: var(--shadow-xs); }
+.sentiment-entries { display: flex; flex-direction: column; gap: 10px; }
+.sentiment-item { display: flex; align-items: center; gap: 10px; }
+.sentiment-bar-wrap { flex: 1; height: 6px; background: var(--surface); border-radius: 3px; overflow: hidden; }
+.sentiment-bar-fill { height: 100%; border-radius: 3px; }
+.sentiment-label { font-size: 12px; color: var(--ink-soft); font-weight: 500; min-width: 110px; }
+.sentiment-pct { font-size: 12px; font-weight: 700; color: var(--ink-soft); min-width: 34px; text-align: right; }
+
+/* Gated analytics overlay */
+.gate-overlay {
+  position: relative; overflow: hidden; border-radius: 16px;
+}
+.gate-overlay-blur { filter: blur(6px); opacity: 0.35; pointer-events: none; }
+.gate-overlay-panel {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 12px;
+  background: rgba(255,255,255,0.7); backdrop-filter: blur(2px);
+  border-radius: 16px;
+}
+.gate-overlay-label { font-size: 13px; font-weight: 700; color: var(--amber); display: flex; align-items: center; gap: 6px; }
+.gate-overlay-sub { font-size: 12px; color: var(--muted); }
+.gate-overlay-btn { padding: 9px 22px; border-radius: var(--radius-pill); background: var(--amber); color: white; border: none; font-family: var(--font-body); font-size: 13px; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+.gate-overlay-btn:hover { background: #B45309; }
+
+/* ─── INTEGRATIONS PAGE ─── */
+.integration-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.int-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 22px; box-shadow: var(--shadow-xs); }
+.int-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.int-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+.int-status-connected { font-size: 11px; font-weight: 700; color: var(--sage); background: var(--sage-pale); border-radius: var(--radius-pill); padding: 3px 10px; }
+.int-status-locked { font-size: 11px; font-weight: 700; color: var(--amber); background: var(--amber-pale); border-radius: var(--radius-pill); padding: 3px 10px; border: 1px solid rgba(217,119,6,0.2); cursor: pointer; }
+.int-name { font-size: 16px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+.int-desc { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
+.int-action { display: flex; align-items: center; gap: 8px; padding: 9px 18px; border-radius: var(--radius-pill); font-family: var(--font-body); font-size: 13px; font-weight: 600; cursor: pointer; border: none; width: 100%; justify-content: center; transition: background 0.15s; }
+.int-action-connected { background: var(--sage-pale); color: var(--sage); }
+.int-action-lock { background: var(--amber); color: white; box-shadow: 0 2px 8px rgba(217,119,6,0.25); }
+.int-action-lock:hover { background: #B45309; }
+
+/* ─── UPGRADE PAGE ─── */
+.upgrade-hero { text-align: center; margin-bottom: 40px; }
+.upgrade-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; }
+.upgrade-title { font-family: var(--font-display); font-size: 52px; letter-spacing: 0.02em; color: var(--dark); line-height: 1; margin-bottom: 14px; }
+.upgrade-sub { font-size: 15px; color: var(--muted); max-width: 480px; margin: 0 auto; line-height: 1.7; }
+
+.tier-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.tier-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 20px; padding: 28px 24px; position: relative; }
+.tier-card.highlighted { border-color: var(--cobalt); box-shadow: 0 0 0 4px rgba(27,79,216,0.08), var(--shadow-md); }
+.tier-badge-top { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 700; background: var(--cobalt); color: white; border-radius: var(--radius-pill); padding: 3px 14px; white-space: nowrap; }
+.tier-name { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; color: var(--dark); margin-bottom: 6px; }
+.tier-price-big { font-size: 36px; font-weight: 800; color: var(--dark); line-height: 1; margin-bottom: 4px; }
+.tier-price-big span { font-size: 16px; font-weight: 500; color: var(--muted); }
+.tier-price-sub { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+.tier-features { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+.tier-feature { display: flex; align-items: flex-start; gap: 9px; font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+.tier-feature svg { flex-shrink: 0; margin-top: 1px; }
+.tier-feature.locked { color: var(--muted-light); }
+.tier-feature.locked svg { color: var(--muted-light); }
+.tier-cta { width: 100%; height: 48px; border-radius: var(--radius-pill); border: none; font-family: var(--font-body); font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.15s; }
+.tier-cta-primary { background: var(--cobalt); color: white; box-shadow: 0 4px 18px rgba(27,79,216,0.28); }
+.tier-cta-primary:hover { background: var(--cobalt-mid); transform: translateY(-1px); }
+.tier-cta-current { background: var(--surface); color: var(--muted); cursor: default; }
+.tier-cta-ghost { background: none; color: var(--cobalt); border: 1.5px solid var(--cobalt); }
+.tier-cta-ghost:hover { background: var(--cobalt-pale); }
+
+/* ─── MODAL: Assign Greeter ─── */
+.modal-overlay { position: fixed; inset: 0; z-index: 300; background: rgba(13,15,26,0.4); backdrop-filter: blur(8px); display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal-sheet { background: var(--white); border-radius: 24px 24px 0 0; padding: 32px 40px 48px; width: 100%; max-width: 680px; transform: translateY(40px); transition: transform 0.4s cubic-bezier(0.4,0,0.2,1); box-shadow: 0 -8px 48px rgba(13,15,26,0.14); }
+.modal-overlay.open .modal-sheet { transform: translateY(0); }
+.modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 28px; }
+.modal-title { font-family: var(--font-display); font-size: 36px; letter-spacing: 0.02em; color: var(--dark); margin-bottom: 4px; }
+.modal-sub { font-size: 14px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+
+.visitor-summary { display: flex; align-items: center; gap: 14px; background: var(--cobalt-pale); border: 1px solid rgba(27,79,216,0.12); border-radius: 14px; padding: 14px 18px; margin-bottom: 24px; }
+.visitor-avatar-lg { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, var(--cobalt-pale), #E0EAFF); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 22px; color: var(--cobalt); flex-shrink: 0; }
+.visitor-name-lg { font-size: 16px; font-weight: 700; color: var(--dark); margin-bottom: 2px; }
+.visitor-detail { font-size: 12px; color: var(--muted); }
+
+.greeter-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+.greeter-opt { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: 14px; cursor: pointer; transition: border-color 0.18s, background 0.18s; background: var(--surface); }
+.greeter-opt:hover { border-color: var(--cobalt-light); background: var(--cobalt-pale); }
+.greeter-opt.selected { border-color: var(--cobalt); background: var(--cobalt-pale); }
+.greeter-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.greeter-name { font-size: 14px; font-weight: 600; color: var(--dark); }
+.greeter-role { font-size: 11px; color: var(--muted); }
+.greeter-avail { margin-left: auto; font-size: 11px; font-weight: 700; color: var(--sage); background: var(--sage-pale); border-radius: var(--radius-pill); padding: 2px 9px; }
+
+.modal-note { background: var(--amber-pale); border: 1px solid rgba(217,119,6,0.2); border-radius: 12px; padding: 14px; font-size: 13px; color: var(--ink-soft); line-height: 1.65; margin-bottom: 20px; }
+.modal-note strong { color: var(--amber); }
+
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.modal-cancel { padding: 12px 24px; border-radius: var(--radius-pill); background: var(--surface); border: 1px solid var(--border); font-family: var(--font-body); font-size: 14px; font-weight: 600; color: var(--muted); cursor: pointer; }
+.modal-submit { padding: 12px 28px; border-radius: var(--radius-pill); background: var(--cobalt); color: white; border: none; font-family: var(--font-body); font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 3px 14px rgba(27,79,216,0.25); transition: background 0.15s; }
+.modal-submit:hover { background: var(--cobalt-mid); }
+</style>
+</head>
+<body>
+
+<!-- Assign Greeter Modal -->
+<div class="modal-overlay" id="greeterModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Assign a Welcome Coordinator.</div>
+    <div class="modal-sub">Let your team know who to look for this Sunday. The coordinator will receive a reminder the morning of.</div>
+    <div class="visitor-summary">
+      <div class="visitor-avatar-lg">M</div>
+      <div>
+        <div class="visitor-name-lg">Maya is planning to visit</div>
+        <div class="visitor-detail">Sunday, Mar 2 · 10:30 AM service · First-time visitor</div>
+      </div>
+    </div>
+    <div class="greeter-list">
+      <div class="greeter-opt" onclick="selectGreeter(this)">
+        <div class="greeter-avatar" style="background:linear-gradient(135deg,#93C5FD,#1B4FD8);display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:14px;">D</div>
+        <div><div class="greeter-name">Deacon Roberts</div><div class="greeter-role">Welcome Team Lead</div></div>
+        <div class="greeter-avail">Available</div>
+      </div>
+      <div class="greeter-opt" onclick="selectGreeter(this)">
+        <div class="greeter-avatar" style="background:linear-gradient(135deg,#6EE7B7,#0891B2);display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:14px;">S</div>
+        <div><div class="greeter-name">Sister Patricia</div><div class="greeter-role">First-Impressions Coordinator</div></div>
+        <div class="greeter-avail">Available</div>
+      </div>
+      <div class="greeter-opt" onclick="selectGreeter(this)">
+        <div class="greeter-avatar" style="background:linear-gradient(135deg,#FDE68A,#D97706);display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:14px;">T</div>
+        <div><div class="greeter-name">Minister Thomas</div><div class="greeter-role">Youth &amp; Outreach Pastor</div></div>
+        <div class="greeter-avail">Available</div>
+      </div>
+    </div>
+    <div class="modal-note">
+      <strong>What happens next:</strong> The assigned coordinator will receive a notification and a morning-of reminder Sunday. They'll know Maya's first name and that it's her first visit — nothing more.
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-submit" onclick="assignGreeter()">Assign &amp; Notify</button>
+    </div>
+  </div>
+</div>
+
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">WIRSHP</div>
+
+    <div class="sidebar-church">
+      <div class="sidebar-church-thumb"><img src="https://images.unsplash.com/photo-1519817914152-22d216bb9170?w=100&q=80&fit=crop" alt=""></div>
+      <div class="sidebar-church-name">Blessed Hope Tabernacle</div>
+      <div class="sidebar-church-status"><div class="status-dot"></div>Live on wirshp</div>
+    </div>
+
+    <div class="sidebar-tier" onclick="navigate('upgrade')">
+      <div>
+        <div class="sidebar-tier-name">Listed Plan</div>
+        <div class="sidebar-tier-cta">Upgrade to unlock visitor alerts →</div>
+      </div>
+    </div>
+
+    <div class="nav-section-label">Dashboard</div>
+    <div class="nav-items">
+      <button class="nav-item active" id="nav-overview" onclick="navigate('overview')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Overview
+      </button>
+      <button class="nav-item" id="nav-alerts" onclick="navigate('alerts')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        Visitor Alerts
+        <span class="nav-badge alert">3</span>
+      </button>
+      <button class="nav-item" id="nav-analytics" onclick="navigate('analytics')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
+        Analytics
+      </button>
+    </div>
+
+    <div class="nav-section-label">Church</div>
+    <div class="nav-items">
+      <button class="nav-item" id="nav-integrations" onclick="navigate('integrations')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        Integrations
+      </button>
+      <button class="nav-item" id="nav-profile" onclick="navigate('profile')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Edit Profile
+      </button>
+      <button class="nav-item" id="nav-upgrade" onclick="navigate('upgrade')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        Upgrade Plan
+        <span class="nav-badge" style="background:var(--amber)">!</span>
+      </button>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">JW</div>
+      <div>
+        <div class="user-name">Pastor James</div>
+        <div class="user-role">Senior Pastor</div>
+      </div>
+      <button class="user-menu">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-greeting">Good morning, <strong>Pastor James</strong> — 3 seekers are planning a visit this Sunday.</div>
+      <div class="topbar-actions">
+        <div class="alert-bell" onclick="navigate('alerts')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <div class="alert-pip"></div>
+        </div>
+        <button class="topbar-btn topbar-btn-ghost" onclick="window.open('wirshp-detail.html')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          View Public Profile
+        </button>
+        <button class="topbar-btn topbar-btn-primary" onclick="navigate('upgrade')">Upgrade Plan</button>
+      </div>
+    </div>
+
+    <div class="scroll-area">
+
+      <!-- ══════════════════════════
+           PAGE: OVERVIEW
+      ══════════════════════════ -->
+      <div class="page visible" id="page-overview">
+
+        <!-- Metrics strip -->
+        <div class="metrics-strip">
+          <div class="metric-card cobalt">
+            <div class="metric-label">Profile Views</div>
+            <div class="metric-value">248</div>
+            <div class="metric-delta up">↑ 34% this week</div>
+          </div>
+          <div class="metric-card teal">
+            <div class="metric-label">Saves</div>
+            <div class="metric-value">41</div>
+            <div class="metric-delta up">↑ 12 this month</div>
+          </div>
+          <div class="metric-card sage">
+            <div class="metric-label">Visitor Alerts</div>
+            <div class="metric-value" style="font-size:32px;filter:blur(6px);user-select:none">3</div>
+            <div class="metric-locked" onclick="navigate('upgrade')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Upgrade to see alerts
+            </div>
+          </div>
+          <div class="metric-card amber">
+            <div class="metric-label">Reflections</div>
+            <div class="metric-value" style="font-size:32px;filter:blur(6px);user-select:none">8</div>
+            <div class="metric-locked" onclick="navigate('upgrade')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Upgrade to see sentiment
+            </div>
+          </div>
+        </div>
+
+        <!-- Visitor alert preview (gated) + upgrade nudge -->
+        <div class="dash-section">
+          <div class="section-hd">
+            <div class="section-title">Visitor Alerts</div>
+            <button class="section-link" onclick="navigate('alerts')">View all →</button>
+          </div>
+
+          <!-- Teaser: blurred alert -->
+          <div style="position:relative;border-radius:16px;overflow:hidden;">
+            <div style="filter:blur(3px);opacity:0.4;pointer-events:none;">
+              <div class="alert-card">
+                <div class="alert-header">
+                  <div class="alert-avatar">M</div>
+                  <div>
+                    <div class="alert-name">Maya is planning a visit</div>
+                    <div class="alert-meta">First-time seeker · Boston</div>
+                  </div>
+                  <div class="alert-timing">
+                    <div class="alert-when"><div class="alert-dot"></div>This Sunday</div>
+                    <div class="alert-service">10:30 AM service</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.6);backdrop-filter:blur(2px);border-radius:16px;border:1.5px dashed rgba(217,119,6,0.3);">
+              <div style="text-align:center;padding:20px;">
+                <div style="font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:6px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  3 seekers are planning to visit this Sunday
+                </div>
+                <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Upgrade to Connected to see who's coming and assign a welcome coordinator.</div>
+                <button class="gate-btn" onclick="navigate('upgrade')">Upgrade to Connected — $39/mo</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Views chart + search appearances -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="chart-card">
+            <div class="chart-title">Profile Views — Last 4 Weeks</div>
+            <div class="bar-chart">
+              <div class="bar-col"><div class="bar" style="height:60px"><div class="bar-fill" style="height:100%"></div></div><div class="bar-label">Feb 3</div></div>
+              <div class="bar-col"><div class="bar" style="height:80px"><div class="bar-fill" style="height:100%"></div></div><div class="bar-label">Feb 10</div></div>
+              <div class="bar-col"><div class="bar" style="height:55px"><div class="bar-fill" style="height:100%"></div></div><div class="bar-label">Feb 17</div></div>
+              <div class="bar-col"><div class="bar" style="height:110px"><div class="bar-fill" style="height:100%"></div></div><div class="bar-label">Feb 24</div></div>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Match Appearances</div>
+            <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;">
+                <span style="color:var(--muted)">Appeared in seeker matches</span>
+                <strong>184 times</strong>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;">
+                <span style="color:var(--muted)">Clicked through from match</span>
+                <strong>61 times</strong>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;">
+                <span style="color:var(--muted)">Saved after viewing</span>
+                <strong>41 times</strong>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;padding-top:8px;border-top:1px solid var(--border-soft);">
+                <span style="color:var(--muted);font-weight:600;">Profile-to-save rate</span>
+                <strong style="color:var(--cobalt)">24.8%</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════
+           PAGE: VISITOR ALERTS
+      ══════════════════════════ -->
+      <div class="page" id="page-alerts">
+        <div class="dash-section">
+          <div class="section-hd">
+            <div class="section-title">Visitor Alerts</div>
+            <div style="font-size:13px;color:var(--muted);">3 seekers planning a visit this Sunday</div>
+          </div>
+
+          <!-- Upgrade nudge banner -->
+          <div style="background:linear-gradient(135deg,#0D0F1A,#1a2040);border-radius:16px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:20px;position:relative;overflow:hidden;">
+            <div style="position:absolute;inset:0;background:radial-gradient(ellipse 300px 200px at 90% 50%,rgba(27,79,216,0.3),transparent);pointer-events:none;"></div>
+            <div style="position:relative;">
+              <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--cobalt-light);margin-bottom:6px;">You're on the Listed plan</div>
+              <div style="font-size:18px;font-weight:700;color:white;margin-bottom:4px;">You can see visitor alerts on Connected ($39/mo)</div>
+              <div style="font-size:13px;color:rgba(255,255,255,0.45);">Unlock full names, seeker signals, and welcome coordinator assignment.</div>
+            </div>
+            <button onclick="navigate('upgrade')" style="flex-shrink:0;padding:11px 24px;background:var(--cobalt);color:white;border:none;border-radius:var(--radius-pill);font-family:var(--font-body);font-size:13px;font-weight:700;cursor:pointer;position:relative;box-shadow:0 4px 18px rgba(27,79,216,0.4);">Upgrade Now</button>
+          </div>
+
+          <!-- Unlocked alert (simulating one unlock) -->
+          <div class="alert-card" id="alert-maya">
+            <div class="alert-header">
+              <div class="alert-avatar">M</div>
+              <div>
+                <div class="alert-name">Maya is planning a visit</div>
+                <div class="alert-meta">First-time seeker · Exploring faith · Boston</div>
+              </div>
+              <div class="alert-timing">
+                <div class="alert-when"><div class="alert-dot"></div>This Sunday</div>
+                <div class="alert-service">10:30 AM service</div>
+              </div>
+            </div>
+            <div class="alert-body">
+              <div class="seeker-signals">
+                <div class="signal-tag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> First-time visitor</div>
+                <div class="signal-tag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/></svg> Exploring faith</div>
+                <div class="signal-tag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> Values: welcoming community</div>
+              </div>
+              <div class="alert-context">"Looking for a community that feels warm and authentic. Hoping to experience genuine worship."</div>
+              <div class="alert-actions" id="maya-actions">
+                <button class="alert-btn alert-btn-primary" onclick="openGreeterModal()">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  Assign Welcome Coordinator
+                </button>
+                <button class="alert-btn alert-btn-ghost">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg>
+                  View Sunday Roster
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gated alerts -->
+          <div class="alert-card" style="margin-top:10px;position:relative;overflow:hidden;">
+            <div style="filter:blur(5px);opacity:0.3;pointer-events:none;">
+              <div class="alert-header">
+                <div class="alert-avatar">D</div>
+                <div><div class="alert-name">David is planning a visit</div><div class="alert-meta">Returning seeker · South End</div></div>
+                <div class="alert-timing"><div class="alert-when" style="animation:none;">Sunday 10:30 AM</div></div>
+              </div>
+            </div>
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;padding:20px 24px;background:rgba(255,255,255,0.8);">
+              <div><div class="gate-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Connected plan required</div><div style="font-size:12px;color:var(--muted);">Upgrade to see David's profile and signals</div></div>
+              <button class="gate-btn" onclick="navigate('upgrade')">Upgrade</button>
+            </div>
+          </div>
+
+          <div class="alert-card" style="margin-top:10px;position:relative;overflow:hidden;">
+            <div style="filter:blur(5px);opacity:0.3;pointer-events:none;">
+              <div class="alert-header">
+                <div class="alert-avatar">R</div>
+                <div><div class="alert-name">Rachel is planning a visit</div><div class="alert-meta">Life transition · Dorchester</div></div>
+                <div class="alert-timing"><div class="alert-when" style="animation:none;">Sunday 8:00 AM</div></div>
+              </div>
+            </div>
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;padding:20px 24px;background:rgba(255,255,255,0.8);">
+              <div><div class="gate-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Connected plan required</div><div style="font-size:12px;color:var(--muted);">Upgrade to see Rachel's profile and signals</div></div>
+              <button class="gate-btn" onclick="navigate('upgrade')">Upgrade</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════
+           PAGE: ANALYTICS
+      ══════════════════════════ -->
+      <div class="page" id="page-analytics">
+        <div class="section-hd" style="margin-bottom:24px;"><div class="section-title">Analytics</div></div>
+
+        <!-- Views + saves — unlocked -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+          <div class="chart-card">
+            <div class="chart-title">Profile Views — Last 8 Weeks</div>
+            <div class="bar-chart">
+              <div class="bar-col"><div class="bar" style="height:40px"><div class="bar-fill" style="height:100%"></div></div><div class="bar-label">Jan 6</div></div>
+              <div class="bar-col"><div class="bar" style="height:55px"><div class="bar-fill" style="height:100%"></div></div><div class="bar-label">Jan 13</div></div>
+              <div class="bar-col"><div class="bar" style="height:48px"><div class="bar-fill" style="height:100%"></div></div><div class="bar-label">Jan 20</div></div>
+              <div class="bar-col"><div class="bar" style="height:70px"><div class="bar-fill" style="height:100%"></div></div><div class="bar-label">Jan 27</div></div>
+              <div class="bar-col"><div class="bar" style="height:60px"><div class="bar-fill" style="height:100%"></div></div><div class="bar-label">Feb 3</div></div>
+              <div class="bar-col"><div class="bar" style="height:80px"><div class="bar-fill" style="height:100%"></div></div><div class="bar-label">Feb 10</div></div>
+              <div class="bar-col"><div class="bar" style="height:55px"><div class="bar-fill" style="height:100%"></div></div><div class="bar-label">Feb 17</div></div>
+              <div class="bar-col"><div class="bar" style="height:110px"><div class="bar-fill" style="height:100%"></div></div><div class="bar-label">Feb 24</div></div>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Saves Over Time</div>
+            <div class="bar-chart">
+              <div class="bar-col"><div class="bar" style="height:20px;background:rgba(8,145,178,0.15)"><div class="bar-fill" style="height:100%;background:var(--teal)"></div></div><div class="bar-label">Jan 6</div></div>
+              <div class="bar-col"><div class="bar" style="height:30px;background:rgba(8,145,178,0.15)"><div class="bar-fill" style="height:100%;background:var(--teal)"></div></div><div class="bar-label">Jan 13</div></div>
+              <div class="bar-col"><div class="bar" style="height:25px;background:rgba(8,145,178,0.15)"><div class="bar-fill" style="height:100%;background:var(--teal)"></div></div><div class="bar-label">Jan 20</div></div>
+              <div class="bar-col"><div class="bar" style="height:50px;background:rgba(8,145,178,0.15)"><div class="bar-fill" style="height:100%;background:var(--teal)"></div></div><div class="bar-label">Jan 27</div></div>
+              <div class="bar-col"><div class="bar" style="height:40px;background:rgba(8,145,178,0.15)"><div class="bar-fill" style="height:100%;background:var(--teal)"></div></div><div class="bar-label">Feb 3</div></div>
+              <div class="bar-col"><div class="bar" style="height:60px;background:rgba(8,145,178,0.15)"><div class="bar-fill" style="height:100%;background:var(--teal)"></div></div><div class="bar-label">Feb 10</div></div>
+              <div class="bar-col"><div class="bar" style="height:45px;background:rgba(8,145,178,0.15)"><div class="bar-fill" style="height:100%;background:var(--teal)"></div></div><div class="bar-label">Feb 17</div></div>
+              <div class="bar-col"><div class="bar" style="height:80px;background:rgba(8,145,178,0.15)"><div class="bar-fill" style="height:100%;background:var(--teal)"></div></div><div class="bar-label">Feb 24</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sentiment — gated -->
+        <div class="gate-overlay">
+          <div class="chart-card gate-overlay-blur">
+            <div class="chart-title">Post-Visit Sentiment (8 reflections)</div>
+            <div class="sentiment-entries">
+              <div class="sentiment-item">
+                <div class="sentiment-label">🙏 I felt welcomed</div>
+                <div class="sentiment-bar-wrap"><div class="sentiment-bar-fill" style="width:62%;background:var(--sage)"></div></div>
+                <div class="sentiment-pct">62%</div>
+              </div>
+              <div class="sentiment-item">
+                <div class="sentiment-label">😌 I'd like to return</div>
+                <div class="sentiment-bar-wrap"><div class="sentiment-bar-fill" style="width:50%;background:var(--cobalt)"></div></div>
+                <div class="sentiment-pct">50%</div>
+              </div>
+              <div class="sentiment-item">
+                <div class="sentiment-label">✨ Something shifted</div>
+                <div class="sentiment-bar-wrap"><div class="sentiment-bar-fill" style="width:37%;background:var(--violet)"></div></div>
+                <div class="sentiment-pct">37%</div>
+              </div>
+              <div class="sentiment-item">
+                <div class="sentiment-label">🤔 I felt unsure</div>
+                <div class="sentiment-bar-wrap"><div class="sentiment-bar-fill" style="width:25%;background:var(--amber)"></div></div>
+                <div class="sentiment-pct">25%</div>
+              </div>
+            </div>
+          </div>
+          <div class="gate-overlay-panel">
+            <div class="gate-overlay-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Partner plan feature</div>
+            <div class="gate-overlay-sub">Anonymized post-visit sentiment from seekers who attended</div>
+            <button class="gate-overlay-btn" onclick="navigate('upgrade')">Upgrade to Partner — $99/mo</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════
+           PAGE: INTEGRATIONS
+      ══════════════════════════ -->
+      <div class="page" id="page-integrations">
+        <div class="section-hd" style="margin-bottom:24px;"><div class="section-title">Integrations</div></div>
+        <div class="integration-grid">
+          <div class="int-card">
+            <div class="int-card-header"><div class="int-icon" style="background:#F0F9FF">🔵</div><div class="int-status-locked" onclick="navigate('upgrade')">Upgrade to Connect</div></div>
+            <div class="int-name">Zoom</div>
+            <div class="int-desc">Link your Zoom room to let seekers join your online service directly from your profile page.</div>
+            <button class="int-action int-action-lock" onclick="navigate('upgrade')">Unlock on Connected Plan</button>
+          </div>
+          <div class="int-card">
+            <div class="int-card-header"><div class="int-icon" style="background:#FEF2F2">▶️</div><div class="int-status-locked" onclick="navigate('upgrade')">Upgrade to Connect</div></div>
+            <div class="int-name">YouTube Live / Vimeo</div>
+            <div class="int-desc">Embed your live stream or sermon archive directly on your wirshp profile — no external link needed.</div>
+            <button class="int-action int-action-lock" onclick="navigate('upgrade')">Unlock on Connected Plan</button>
+          </div>
+          <div class="int-card">
+            <div class="int-card-header"><div class="int-icon" style="background:#F0FDF4">📧</div><div class="int-status-locked" onclick="navigate('upgrade')">Upgrade to Connect</div></div>
+            <div class="int-name">Visitor Follow-up Email</div>
+            <div class="int-desc">Automatically send a warm, personal welcome email after a seeker attends your service.</div>
+            <button class="int-action int-action-lock" onclick="navigate('upgrade')">Unlock on Connected Plan</button>
+          </div>
+          <div class="int-card">
+            <div class="int-card-header"><div class="int-icon" style="background:#FFFBEB">📅</div><div class="int-status-connected">Connected</div></div>
+            <div class="int-name">Google Calendar</div>
+            <div class="int-desc">Your service times and events sync automatically — seekers always see accurate information.</div>
+            <button class="int-action int-action-connected">✓ Syncing now</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════
+           PAGE: UPGRADE
+      ══════════════════════════ -->
+      <div class="page" id="page-upgrade">
+        <div class="upgrade-hero">
+          <div class="upgrade-eyebrow">Wirshp for Churches</div>
+          <div class="upgrade-title">Welcome seekers<br>the right way.</div>
+          <div class="upgrade-sub">Every plan starts with a discoverable profile. Upgrade when you're ready to build real relationships with people walking through your door.</div>
+        </div>
+
+        <div class="tier-grid">
+          <!-- Listed -->
+          <div class="tier-card">
+            <div class="tier-name">Listed</div>
+            <div class="tier-price-big">Free <span>forever</span></div>
+            <div class="tier-price-sub">No credit card required</div>
+            <div class="tier-features">
+              <div class="tier-feature"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Church profile page</div>
+              <div class="tier-feature"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Appear in seeker matches</div>
+              <div class="tier-feature"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Profile views &amp; save count</div>
+              <div class="tier-feature"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Google Calendar sync</div>
+              <div class="tier-feature locked"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--muted-light)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Visitor alerts</div>
+              <div class="tier-feature locked"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--muted-light)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Follow-up email</div>
+              <div class="tier-feature locked"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--muted-light)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Sentiment analytics</div>
+            </div>
+            <button class="tier-cta tier-cta-current">Current Plan</button>
+          </div>
+
+          <!-- Connected -->
+          <div class="tier-card highlighted">
+            <div class="tier-badge-top">Most Popular</div>
+            <div class="tier-name">Connected</div>
+            <div class="tier-price-big">$39 <span>/ month</span></div>
+            <div class="tier-price-sub">Billed monthly · cancel anytime</div>
+            <div class="tier-features">
+              <div class="tier-feature"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Everything in Listed</div>
+              <div class="tier-feature"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Visitor alerts with seeker signals</div>
+              <div class="tier-feature"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Welcome coordinator assignment</div>
+              <div class="tier-feature"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Automated follow-up email</div>
+              <div class="tier-feature"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Zoom online service link</div>
+              <div class="tier-feature"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> YouTube / Vimeo embed</div>
+              <div class="tier-feature locked"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--muted-light)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Post-visit sentiment analytics</div>
+              <div class="tier-feature locked"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--muted-light)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Priority placement in matches</div>
+            </div>
+            <button class="tier-cta tier-cta-primary">Upgrade to Connected</button>
+          </div>
+
+          <!-- Partner -->
+          <div class="tier-card">
+            <div class="tier-name">Partner</div>
+            <div class="tier-price-big">$99 <span>/ month</span></div>
+            <div class="tier-price-sub">Billed monthly · cancel anytime</div>
+            <div class="tier-features">
+              <div class="tier-feature"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Everything in Connected</div>
+              <div class="tier-feature"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Anonymized post-visit sentiment</div>
+              <div class="tier-feature"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Priority placement in search</div>
+              <div class="tier-feature"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Team member access</div>
+              <div class="tier-feature"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Visitor trend reports</div>
+              <div class="tier-feature"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Custom welcome email templates</div>
+              <div class="tier-feature"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Dedicated support</div>
+            </div>
+            <button class="tier-cta tier-cta-ghost">Upgrade to Partner</button>
+          </div>
+        </div>
+
+        <div style="text-align:center;margin-top:28px;font-size:13px;color:var(--muted);">
+          All plans include a 14-day free trial on first upgrade. No contracts. Cancel anytime.
+        </div>
+      </div>
+
+      <!-- Edit Profile stub -->
+      <div class="page" id="page-profile">
+        <div class="section-hd" style="margin-bottom:24px;"><div class="section-title">Edit Profile</div></div>
+        <div style="background:var(--white);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:600px;box-shadow:var(--shadow-xs);">
+          <div style="font-size:14px;color:var(--muted);line-height:1.7;">Your profile editor — identity, services, photos, and media — is available here. This section mirrors your onboarding setup and can be updated at any time.</div>
+          <button style="margin-top:20px;padding:10px 24px;border-radius:var(--radius-pill);background:var(--cobalt);color:white;border:none;font-family:var(--font-body);font-size:13px;font-weight:600;cursor:pointer;" onclick="window.location.href='wirshp-church-onboarding.html'">Re-open Profile Editor</button>
+        </div>
+      </div>
+
+    </div><!-- /scroll-area -->
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<script>
+function navigate(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('visible'));
+  document.getElementById(`page-${id}`).classList.add('visible');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const nav = document.getElementById(`nav-${id}`);
+  if (nav) nav.classList.add('active');
+  document.querySelector('.scroll-area').scrollTop = 0;
+}
+
+// Greeter modal
+function openGreeterModal() {
+  document.getElementById('greeterModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('greeterModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function selectGreeter(el) {
+  document.querySelectorAll('.greeter-opt').forEach(g => g.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function assignGreeter() {
+  closeModal();
+  const actions = document.getElementById('maya-actions');
+  actions.innerHTML = `
+    <div class="alert-btn alert-btn-done">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>
+      Welcome coordinator assigned — Deacon Roberts notified
+    </div>
+  `;
+}
+document.getElementById('greeterModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('greeterModal')) closeModal();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Dashboard — wirshp</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cobalt-pale:  #EEF4FF;
+  --cobalt-light: #93C5FD;
+  --cobalt-mid:   #2952CC;
+  --cobalt:       #1B4FD8;
+  --teal:         #0891B2;
+  --amber:        #D97706;
+  --rose:         #BE185D;
+  --sage:         #4D7C5F;
+  --dark:         #0D0F1A;
+  --ink:          #1A1D2E;
+  --ink-soft:     #374151;
+  --muted:        #6B7280;
+  --muted-light:  #9CA3AF;
+  --border:       #E5E9F0;
+  --border-soft:  #F1F4F9;
+  --surface:      #F7F9FC;
+  --canvas:       #F2F5FA;
+  --white:        #FFFFFF;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+  --radius-pill:  9999px;
+  --sidebar-w:    248px;
+  --shadow-xs:    0 1px 4px rgba(13,15,26,0.06);
+  --shadow-sm:    0 2px 12px rgba(13,15,26,0.07);
+  --shadow-md:    0 4px 24px rgba(13,15,26,0.09);
+}
+
+html, body {
+  height: 100%; font-family: var(--font-body);
+  background: var(--canvas); color: var(--ink);
+  -webkit-font-smoothing: antialiased; overflow: hidden;
+}
+
+/* ─── SHELL ─── */
+.shell { display: grid; grid-template-columns: var(--sidebar-w) 1fr; height: 100vh; overflow: hidden; }
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  background: var(--white); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.sidebar-logo {
+  padding: 28px 24px 22px; font-family: var(--font-display);
+  font-size: 26px; letter-spacing: 0.06em; color: var(--dark);
+  border-bottom: 1px solid var(--border-soft); flex-shrink: 0;
+}
+
+/* Journey widget */
+.sidebar-journey {
+  margin: 16px 12px 4px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--cobalt-pale), #E0EAFF);
+  border: 1px solid rgba(27,79,216,0.12); border-radius: 14px; padding: 16px;
+}
+.journey-label { font-size: 10px; font-weight: 700; color: var(--cobalt); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 3px; }
+.journey-stage { font-family: var(--font-display); font-size: 20px; letter-spacing: 0.03em; color: var(--dark); margin-bottom: 10px; }
+.journey-track { height: 4px; background: rgba(27,79,216,0.12); border-radius: var(--radius-pill); overflow: hidden; }
+.journey-fill { height: 100%; background: linear-gradient(90deg, var(--cobalt), var(--cobalt-light)); border-radius: var(--radius-pill); width: 15%; transition: width 0.9s cubic-bezier(0.4,0,0.2,1); }
+.journey-micro { font-size: 11px; color: var(--muted); margin-top: 8px; line-height: 1.5; font-style: italic; }
+
+/* Nav */
+.nav-label { font-size: 10px; font-weight: 700; color: var(--muted-light); letter-spacing: 0.12em; text-transform: uppercase; padding: 16px 24px 8px; flex-shrink: 0; }
+.nav-items { display: flex; flex-direction: column; gap: 2px; padding: 0 12px; flex: 1; overflow: hidden; }
+.nav-item {
+  display: flex; align-items: center; gap: 11px; padding: 10px 14px;
+  border-radius: 10px; font-size: 14px; font-weight: 500; color: var(--muted);
+  cursor: pointer; transition: background 0.15s, color 0.15s;
+  border: none; background: none; width: 100%; text-align: left;
+}
+.nav-item:hover { background: var(--surface); color: var(--ink); }
+.nav-item.active { background: var(--cobalt-pale); color: var(--cobalt); font-weight: 600; }
+.nav-item svg { flex-shrink: 0; opacity: 0.75; }
+.nav-item.active svg { opacity: 1; }
+.nav-badge { margin-left: auto; background: var(--cobalt); color: white; font-size: 10px; font-weight: 700; border-radius: var(--radius-pill); padding: 1px 7px; }
+
+/* Sidebar user */
+.sidebar-user { padding: 14px 16px; border-top: 1px solid var(--border-soft); display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.user-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--cobalt), var(--teal)); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: white; flex-shrink: 0; }
+.user-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+.user-sub { font-size: 11px; color: var(--muted); }
+.user-menu { margin-left: auto; color: var(--muted); background: none; border: none; cursor: pointer; padding: 4px; border-radius: 6px; transition: background 0.15s; }
+.user-menu:hover { background: var(--surface); }
+
+/* ─── MAIN ─── */
+.main { display: flex; flex-direction: column; overflow: hidden; }
+
+/* Topbar */
+.topbar { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 40px; height: 60px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.topbar-greeting { font-size: 14px; font-weight: 500; color: var(--ink-soft); }
+.topbar-greeting strong { color: var(--ink); }
+.topbar-cta { display: flex; align-items: center; gap: 7px; padding: 8px 18px; border-radius: var(--radius-pill); background: var(--cobalt); color: white; border: none; font-family: var(--font-body); font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 10px rgba(27,79,216,0.25); transition: background 0.15s, transform 0.1s; }
+.topbar-cta:hover { background: var(--cobalt-mid); transform: translateY(-1px); }
+
+/* Scroll */
+.scroll-area { flex: 1; overflow-y: auto; padding: 36px 40px 64px; }
+.scroll-area::-webkit-scrollbar { width: 5px; }
+.scroll-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+/* ─── PAGES ─── */
+.page { display: none; }
+.page.visible { display: block; animation: fadeUp 0.38s ease both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ─── SECTION HEADERS ─── */
+.section-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.section-title { font-family: var(--font-display); font-size: 30px; letter-spacing: 0.02em; color: var(--dark); }
+.section-link { font-size: 13px; font-weight: 600; color: var(--cobalt); cursor: pointer; background: none; border: none; transition: opacity 0.2s; }
+.section-link:hover { opacity: 0.7; }
+.dash-section { margin-bottom: 40px; }
+
+/* ─── WELCOME STRIP ─── */
+.welcome-strip {
+  background: linear-gradient(135deg, var(--dark) 0%, #1a2040 100%);
+  border-radius: 20px; padding: 36px 40px; display: flex;
+  align-items: center; justify-content: space-between; gap: 32px;
+  margin-bottom: 40px; overflow: hidden; position: relative;
+}
+.welcome-strip::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 90% 50%, rgba(27,79,216,0.25) 0%, transparent 70%),
+              radial-gradient(ellipse 40% 60% at 10% 20%, rgba(8,145,178,0.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+.welcome-text { position: relative; }
+.welcome-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cobalt-light); margin-bottom: 8px; }
+.welcome-hed { font-family: var(--font-display); font-size: 44px; letter-spacing: 0.02em; color: white; line-height: 1; margin-bottom: 12px; }
+.welcome-sub { font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.65; max-width: 380px; }
+.welcome-btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 28px; background: var(--cobalt); color: white; border: none; border-radius: var(--radius-pill); font-family: var(--font-body); font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; position: relative; box-shadow: 0 4px 20px rgba(27,79,216,0.4); transition: background 0.2s, transform 0.15s; }
+.welcome-btn:hover { background: var(--cobalt-mid); transform: translateY(-1px); }
+
+/* ─── EMPTY STATE ─── */
+.empty-state { background: var(--white); border: 1px dashed var(--border); border-radius: 18px; padding: 52px 32px; text-align: center; }
+.empty-icon { width: 52px; height: 52px; border-radius: 16px; background: var(--cobalt-pale); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+.empty-icon svg { color: var(--cobalt); }
+.empty-title { font-size: 17px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+.empty-sub { font-size: 14px; color: var(--muted); line-height: 1.65; max-width: 340px; margin: 0 auto 28px; }
+.empty-cta { display: inline-flex; align-items: center; gap: 8px; padding: 12px 26px; background: var(--cobalt); color: white; border: none; border-radius: var(--radius-pill); font-family: var(--font-body); font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 3px 14px rgba(27,79,216,0.25); transition: background 0.2s, transform 0.15s; }
+.empty-cta:hover { background: var(--cobalt-mid); transform: translateY(-1px); }
+
+/* ─── SAVES GRID ─── */
+.saves-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.save-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-xs); transition: box-shadow 0.2s, transform 0.2s; }
+.save-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.save-thumb { width: 100%; height: 120px; overflow: hidden; position: relative; }
+.save-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.save-remove { position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.9); backdrop-filter: blur(8px); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 13px; transition: color 0.15s; }
+.save-remove:hover { color: var(--rose); }
+.save-body { padding: 14px 16px; }
+.save-name { font-size: 15px; font-weight: 700; color: var(--dark); margin-bottom: 3px; }
+.save-meta { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+.save-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.save-tag { font-size: 10px; font-weight: 600; color: var(--cobalt); background: var(--cobalt-pale); border-radius: var(--radius-pill); padding: 2px 8px; }
+.save-actions { display: flex; gap: 8px; }
+.save-btn { flex: 1; height: 36px; border-radius: var(--radius-pill); font-family: var(--font-body); font-size: 12px; font-weight: 600; cursor: pointer; border: none; display: flex; align-items: center; justify-content: center; gap: 5px; transition: background 0.15s; }
+.save-btn-p { background: var(--cobalt); color: white; }
+.save-btn-p:hover { background: var(--cobalt-mid); }
+.save-btn-g { background: var(--surface); color: var(--ink-soft); border: 1px solid var(--border); }
+.save-btn-g:hover { background: var(--border-soft); }
+
+/* ─── PREFERENCES ─── */
+.pref-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 20px; box-shadow: var(--shadow-xs); }
+.pref-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.pref-title { font-size: 15px; font-weight: 700; color: var(--dark); }
+.pref-edit { font-size: 12px; font-weight: 600; color: var(--cobalt); cursor: pointer; background: none; border: none; transition: opacity 0.2s; }
+.pref-edit:hover { opacity: 0.7; }
+.pref-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.ptag { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: var(--ink-soft); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-pill); padding: 5px 12px; }
+.ptag svg { color: var(--cobalt); }
+
+/* ─── TWO COL ─── */
+.two-col { display: grid; grid-template-columns: 1fr 280px; gap: 24px; align-items: start; }
+
+/* ─── MY VISITS PAGE ─── */
+.visits-hd { margin-bottom: 0; }
+.visits-title { font-family: var(--font-display); font-size: 42px; letter-spacing: 0.02em; color: var(--dark); margin-bottom: 6px; }
+.visits-sub { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 0; }
+
+/* Tabs — matches detail page pattern */
+.visits-tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin: 24px 0 28px;
+}
+.visits-tab {
+  padding: 14px 0; margin-right: 28px;
+  font-size: 14px; font-weight: 600; color: var(--muted);
+  cursor: pointer; background: none; border: none;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+  display: flex; align-items: center; gap: 8px;
+}
+.visits-tab:hover { color: var(--ink); }
+.visits-tab.active { color: var(--cobalt); border-bottom-color: var(--cobalt); }
+.tab-badge {
+  font-size: 11px; font-weight: 700;
+  background: var(--cobalt-pale); color: var(--cobalt);
+  border-radius: var(--radius-pill); padding: 1px 7px;
+}
+.visits-tab.active .tab-badge { background: var(--cobalt); color: white; }
+
+/* Tab panels */
+.tab-panel { display: none; }
+.tab-panel.visible { display: block; animation: fadeUp 0.3s ease both; }
+
+/* ─── VISIT CARDS ─── */
+.visit-card { display: grid; grid-template-columns: 72px 1fr auto; gap: 18px; align-items: start; padding: 20px; background: var(--surface); border: 1px solid var(--border-soft); border-radius: 14px; transition: box-shadow 0.2s, transform 0.2s; }
+.visit-card:hover { box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+.visit-card + .visit-card { margin-top: 10px; }
+.visit-thumb { width: 72px; height: 72px; border-radius: 12px; overflow: hidden; flex-shrink: 0; }
+.visit-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.visit-name { font-size: 16px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+.visit-meta { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; }
+.visit-meta-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--muted); font-weight: 500; }
+.visit-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.vtag { font-size: 11px; font-weight: 600; color: var(--cobalt); background: var(--cobalt-pale); border-radius: var(--radius-pill); padding: 3px 10px; }
+.vtag.teal { color: var(--teal); background: #E0F7FA; }
+.vtag.sage { color: var(--sage); background: #E8F5EC; }
+
+.visit-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; flex-shrink: 0; }
+.va { display: flex; align-items: center; gap: 5px; padding: 7px 14px; border-radius: var(--radius-pill); font-family: var(--font-body); font-size: 12px; font-weight: 600; cursor: pointer; border: none; white-space: nowrap; transition: background 0.15s; }
+.va-p { background: var(--cobalt); color: white; box-shadow: 0 2px 8px rgba(27,79,216,0.2); }
+.va-p:hover { background: var(--cobalt-mid); }
+.va-g { background: var(--white); color: var(--ink-soft); border: 1px solid var(--border); }
+.va-g:hover { background: var(--border-soft); }
+.va-m { background: rgba(77,124,95,0.1); color: var(--sage); border: 1px solid rgba(77,124,95,0.2); }
+.va-m:hover { background: rgba(77,124,95,0.18); }
+
+/* Upcoming pulse badge */
+.upcoming-label { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--cobalt); background: var(--cobalt-pale); border-radius: var(--radius-pill); padding: 3px 10px; margin-bottom: 8px; }
+.upcoming-label .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cobalt); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+/* Reflection banners */
+.refl-banner { margin-top: 12px; background: linear-gradient(135deg, #FFF7ED, #FEF3C7); border: 1px solid rgba(217,119,6,0.2); border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.refl-text strong { display: block; font-size: 14px; color: var(--ink); margin-bottom: 1px; }
+.refl-text { font-size: 13px; color: var(--amber); }
+.refl-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: var(--amber); color: white; border: none; border-radius: var(--radius-pill); font-family: var(--font-body); font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background 0.15s; }
+.refl-btn:hover { background: #B45309; }
+.refl-done { margin-top: 12px; background: rgba(77,124,95,0.07); border: 1px solid rgba(77,124,95,0.2); border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--sage); font-weight: 500; line-height: 1.5; }
+.refl-done svg { flex-shrink: 0; }
+
+/* Past suggestions inline */
+.sugg-section { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--border-soft); }
+.sugg-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+.sugg-strip { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px; }
+.sugg-strip::-webkit-scrollbar { height: 3px; }
+.sugg-strip::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.sugg-card { background: var(--white); border: 1px solid var(--border); border-radius: 14px; min-width: 185px; overflow: hidden; box-shadow: var(--shadow-xs); transition: box-shadow 0.2s, transform 0.2s; cursor: pointer; flex-shrink: 0; }
+.sugg-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.sugg-thumb { width: 100%; height: 88px; overflow: hidden; }
+.sugg-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.sugg-body { padding: 10px 12px; }
+.sugg-name { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 2px; }
+.sugg-meta { font-size: 11px; color: var(--muted); }
+.sugg-reason { margin-top: 5px; font-size: 11px; color: var(--cobalt); font-weight: 600; display: flex; align-items: center; gap: 4px; }
+
+/* ─── REFLECTION MODAL ─── */
+.modal-overlay { position: fixed; inset: 0; z-index: 300; background: rgba(13,15,26,0.35); backdrop-filter: blur(8px); display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal-sheet { background: var(--white); border-radius: 24px 24px 0 0; padding: 32px 40px 48px; width: 100%; max-width: 680px; transform: translateY(40px); transition: transform 0.4s cubic-bezier(0.4,0,0.2,1); box-shadow: 0 -8px 48px rgba(13,15,26,0.14); }
+.modal-overlay.open .modal-sheet { transform: translateY(0); }
+.modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 28px; }
+.modal-title { font-family: var(--font-display); font-size: 36px; letter-spacing: 0.02em; color: var(--dark); margin-bottom: 4px; }
+.modal-sub { font-size: 14px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+.modal-ref { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; margin-bottom: 24px; }
+.modal-ref-thumb { width: 40px; height: 40px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
+.modal-ref-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.modal-ref-name { font-size: 14px; font-weight: 700; color: var(--dark); }
+.modal-ref-date { font-size: 12px; color: var(--muted); }
+.feeling-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.feeling-opt { padding: 14px 18px; border: 1.5px solid var(--border); border-radius: 14px; background: var(--surface); cursor: pointer; font-size: 14px; font-weight: 500; color: var(--ink); transition: border-color 0.18s, background 0.18s; display: flex; align-items: center; gap: 10px; }
+.feeling-opt:hover { border-color: var(--cobalt-light); background: var(--cobalt-pale); }
+.feeling-opt.selected { border-color: var(--cobalt); background: var(--cobalt-pale); color: var(--cobalt); font-weight: 600; }
+.feeling-emoji { font-size: 20px; }
+.refl-ta { width: 100%; background: var(--surface); border: 1.5px solid var(--border); border-radius: 14px; padding: 14px 18px; font-family: var(--font-body); font-size: 14px; color: var(--ink); line-height: 1.65; resize: none; min-height: 80px; outline: none; transition: border-color 0.2s; margin-bottom: 20px; }
+.refl-ta:focus { border-color: var(--cobalt); }
+.refl-ta::placeholder { color: var(--muted); font-style: italic; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.modal-cancel { padding: 12px 24px; border-radius: var(--radius-pill); background: var(--surface); border: 1px solid var(--border); font-family: var(--font-body); font-size: 14px; font-weight: 600; color: var(--muted); cursor: pointer; transition: background 0.15s; }
+.modal-cancel:hover { background: var(--border-soft); }
+.modal-submit { padding: 12px 28px; border-radius: var(--radius-pill); background: var(--cobalt); color: white; border: none; font-family: var(--font-body); font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 3px 14px rgba(27,79,216,0.25); transition: background 0.15s; }
+.modal-submit:hover { background: var(--cobalt-mid); }
+</style>
+</head>
+<body>
+
+<!-- Reflection Modal -->
+<div class="modal-overlay" id="reflModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">How did it go?</div>
+    <div class="modal-sub">Share how you felt. Your reflection stays private — it's just for you and your journey.</div>
+    <div class="modal-ref">
+      <div class="modal-ref-thumb"><img src="https://images.unsplash.com/photo-1566438480900-0609be27a4be?w=120&q=80&fit=crop" alt=""></div>
+      <div>
+        <div class="modal-ref-name">New Life Community Church</div>
+        <div class="modal-ref-date">Visited Sunday, Feb 16, 2026</div>
+      </div>
+    </div>
+    <div class="feeling-opts">
+      <div class="feeling-opt" onclick="selectFeeling(this)"><span class="feeling-emoji">🙏</span> I felt welcomed</div>
+      <div class="feeling-opt" onclick="selectFeeling(this)"><span class="feeling-emoji">😌</span> I'd like to return</div>
+      <div class="feeling-opt" onclick="selectFeeling(this)"><span class="feeling-emoji">🤔</span> I felt unsure</div>
+      <div class="feeling-opt" onclick="selectFeeling(this)"><span class="feeling-emoji">💬</span> I didn't connect</div>
+      <div class="feeling-opt" onclick="selectFeeling(this)"><span class="feeling-emoji">⏳</span> I'm not sure yet</div>
+      <div class="feeling-opt" onclick="selectFeeling(this)"><span class="feeling-emoji">✨</span> Something shifted</div>
+    </div>
+    <textarea class="refl-ta" placeholder="Anything else you'd like to remember… (optional)"></textarea>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeModal()">Not now</button>
+      <button class="modal-submit" onclick="submitReflection()">Save Reflection</button>
+    </div>
+  </div>
+</div>
+
+<div class="shell">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">WIRSHP</div>
+
+    <div class="sidebar-journey">
+      <div class="journey-label">Your journey</div>
+      <div class="journey-stage" id="journeyStage">Exploring</div>
+      <div class="journey-track"><div class="journey-fill" id="journeyFill"></div></div>
+      <div class="journey-micro">Finding a church takes time. We're here with you.</div>
+    </div>
+
+    <div class="nav-label">Navigate</div>
+    <div class="nav-items">
+      <button class="nav-item active" id="nav-overview" onclick="navigate('overview')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Overview
+      </button>
+      <button class="nav-item" id="nav-my-visits" onclick="navigate('my-visits')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        My Visits
+        <span class="nav-badge">1</span>
+      </button>
+      <button class="nav-item" id="nav-saved" onclick="navigate('saved')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        Saved Churches
+        <span class="nav-badge">3</span>
+      </button>
+      <button class="nav-item" id="nav-matches" onclick="navigate('matches')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        My Matches
+      </button>
+      <button class="nav-item" id="nav-preferences" onclick="navigate('preferences')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+        Preferences
+      </button>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">MA</div>
+      <div>
+        <div class="user-name">Maya A.</div>
+        <div class="user-sub" id="userSub">Seeker · Boston</div>
+      </div>
+      <button class="user-menu">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-greeting">Good morning, <strong>Maya</strong> — here's where your journey stands.</div>
+      <button class="topbar-cta" onclick="window.location.href='wirshp-search.html'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        Explore Churches
+      </button>
+    </div>
+
+    <div class="scroll-area">
+
+      <!-- ══════════════════════════════
+           PAGE: OVERVIEW (Account-only default)
+      ══════════════════════════════ -->
+      <div class="page visible" id="page-overview">
+        <div class="welcome-strip">
+          <div class="welcome-text">
+            <div class="welcome-eyebrow">Welcome to wirshp</div>
+            <div class="welcome-hed">Your search<br>starts here.</div>
+            <div class="welcome-sub">Explore churches matched to your values, plan your first visit, and track your journey — at your own pace.</div>
+          </div>
+          <button class="welcome-btn" onclick="window.location.href='wirshp-search.html'">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            Explore Your Matches
+          </button>
+        </div>
+
+        <div class="two-col">
+          <div>
+            <!-- Saved churches (already have 3) -->
+            <div class="dash-section">
+              <div class="section-hd">
+                <div class="section-title">Saved Churches</div>
+                <button class="section-link" onclick="navigate('saved')">View all →</button>
+              </div>
+              <div class="saves-grid">
+                <div class="save-card">
+                  <div class="save-thumb"><img src="https://images.unsplash.com/photo-1566438480900-0609be27a4be?w=400&q=80&fit=crop" alt=""><button class="save-remove" onclick="this.closest('.save-card').style.opacity='0.3'">✕</button></div>
+                  <div class="save-body">
+                    <div class="save-name">New Life Community Church</div>
+                    <div class="save-meta">Non-denominational · Roxbury · 8 min</div>
+                    <div class="save-tags"><span class="save-tag">Contemporary</span><span class="save-tag">Young Adults</span></div>
+                    <div class="save-actions"><button class="save-btn save-btn-p" onclick="navigate('my-visits')">Plan Visit</button><button class="save-btn save-btn-g">View</button></div>
+                  </div>
+                </div>
+                <div class="save-card">
+                  <div class="save-thumb"><img src="https://images.unsplash.com/photo-1523803326055-9729b9e02e5a?w=400&q=80&fit=crop" alt=""><button class="save-remove" onclick="this.closest('.save-card').style.opacity='0.3'">✕</button></div>
+                  <div class="save-body">
+                    <div class="save-name">Greater Love Baptist</div>
+                    <div class="save-meta">Baptist · Dorchester · 14 min</div>
+                    <div class="save-tags"><span class="save-tag">Gospel Choir</span><span class="save-tag">Family</span></div>
+                    <div class="save-actions"><button class="save-btn save-btn-p" onclick="navigate('my-visits')">Plan Visit</button><button class="save-btn save-btn-g">View</button></div>
+                  </div>
+                </div>
+                <div class="save-card">
+                  <div class="save-thumb"><img src="https://images.unsplash.com/photo-1548625149-720134b81b41?w=400&q=80&fit=crop" alt=""><button class="save-remove" onclick="this.closest('.save-card').style.opacity='0.3'">✕</button></div>
+                  <div class="save-body">
+                    <div class="save-name">Emmanuel Gospel Center</div>
+                    <div class="save-meta">Interdenominational · Fenway · 6 min</div>
+                    <div class="save-tags"><span class="save-tag">Diverse</span><span class="save-tag">Outreach</span></div>
+                    <div class="save-actions"><button class="save-btn save-btn-p" onclick="navigate('my-visits')">Plan Visit</button><button class="save-btn save-btn-g">View</button></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Visits empty (no visits yet) -->
+            <div class="dash-section">
+              <div class="section-hd"><div class="section-title">My Visits</div></div>
+              <div class="empty-state">
+                <div class="empty-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+                <div class="empty-title">No visits planned yet</div>
+                <div class="empty-sub">When you're ready, we'll help you prepare — what to expect, what to bring, and how to make the most of your first visit.</div>
+                <button class="empty-cta" onclick="navigate('my-visits')">
+                  Plan a Visit
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Preferences sidebar -->
+          <div>
+            <div class="dash-section">
+              <div class="section-hd"><div class="section-title">Preferences</div></div>
+              <div class="pref-card">
+                <div class="pref-hd">
+                  <div class="pref-title">Your match profile</div>
+                  <button class="pref-edit" onclick="navigate('preferences')">Edit →</button>
+                </div>
+                <div class="pref-tags">
+                  <div class="ptag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/></svg> Praise &amp; Worship</div>
+                  <div class="ptag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/></svg> Medium-sized</div>
+                  <div class="ptag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg> Sunday AM</div>
+                  <div class="ptag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> Within 20 min</div>
+                  <div class="ptag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> Newcomer-friendly</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════
+           PAGE: MY VISITS (accordion)
+      ══════════════════════════════ -->
+      <div class="page" id="page-my-visits">
+        <div class="visits-hd">
+          <div class="visits-title">My Visits</div>
+          <div class="visits-sub">Track your upcoming and past church visits — all in one place.</div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="visits-tabs">
+          <button class="visits-tab active" id="tab-upcoming" onclick="switchTab('upcoming')">
+            Upcoming Visits
+            <span class="tab-badge" id="upcomingBadge">1</span>
+          </button>
+          <button class="visits-tab" id="tab-past" onclick="switchTab('past')">
+            Past Visits
+            <span class="tab-badge" id="pastBadge">2</span>
+          </button>
+        </div>
+
+        <!-- Tab panel: Upcoming -->
+        <div class="tab-panel visible" id="tab-panel-upcoming">
+          <div class="visit-card">
+            <div class="visit-thumb"><img src="https://images.unsplash.com/photo-1519817914152-22d216bb9170?w=200&q=80&fit=crop" alt=""></div>
+            <div>
+              <div class="upcoming-label"><div class="dot"></div>This Sunday</div>
+              <div class="visit-name">Blessed Hope Tabernacle</div>
+              <div class="visit-meta">
+                <div class="visit-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg> Sun, Mar 2 · 10:00 AM</div>
+                <div class="visit-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> South Boston · 12 min</div>
+              </div>
+              <div class="visit-tags"><span class="vtag">Pentecostal</span><span class="vtag teal">Praise &amp; Worship</span><span class="vtag sage">Newcomer-Friendly</span></div>
+            </div>
+            <div class="visit-actions">
+              <button class="va va-p"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Add to Calendar</button>
+              <button class="va va-g">View Profile</button>
+              <button class="va va-m" id="markBtn" onclick="markAttended()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg> Mark Attended</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab panel: Past -->
+        <div class="tab-panel" id="tab-panel-past">
+
+          <!-- Pending reflection -->
+          <div class="visit-card">
+            <div class="visit-thumb"><img src="https://images.unsplash.com/photo-1566438480900-0609be27a4be?w=200&q=80&fit=crop" alt=""></div>
+            <div style="grid-column: 2 / span 2;">
+              <div class="visit-name">New Life Community Church</div>
+              <div class="visit-meta">
+                <div class="visit-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg> Attended Sun, Feb 16, 2026</div>
+                <div class="visit-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Roxbury</div>
+              </div>
+              <div class="visit-tags"><span class="vtag">Non-denominational</span><span class="vtag teal">Contemporary</span></div>
+              <div class="refl-banner" id="reflBanner">
+                <div class="refl-text"><strong>How did it feel?</strong>Take a moment to reflect. It helps refine your matches.</div>
+                <button class="refl-btn" onclick="openModal()">Reflect Now <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reflection done -->
+          <div class="visit-card" style="margin-top:10px;">
+            <div class="visit-thumb"><img src="https://images.unsplash.com/photo-1519817914152-22d216bb9170?w=200&q=80&fit=crop" alt=""></div>
+            <div style="grid-column: 2 / span 2;">
+              <div class="visit-name">Blessed Hope Tabernacle</div>
+              <div class="visit-meta">
+                <div class="visit-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg> Attended Sun, Feb 2, 2026</div>
+                <div class="visit-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg> South Boston</div>
+              </div>
+              <div class="visit-tags"><span class="vtag">Pentecostal</span><span class="vtag sage">Newcomer-Friendly</span></div>
+              <div class="refl-done">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor"/></svg>
+                You felt welcomed — "The music was incredible. I'd go back."
+              </div>
+            </div>
+          </div>
+
+          <!-- Suggestions -->
+          <div class="sugg-section">
+            <div class="sugg-label">You might also like</div>
+            <div class="sugg-strip">
+              <div class="sugg-card">
+                <div class="sugg-thumb"><img src="https://images.unsplash.com/photo-1523803326055-9729b9e02e5a?w=300&q=80&fit=crop" alt=""></div>
+                <div class="sugg-body"><div class="sugg-name">Greater Love Baptist</div><div class="sugg-meta">Baptist · Dorchester · 14 min</div><div class="sugg-reason"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg> Similar to Blessed Hope</div></div>
+              </div>
+              <div class="sugg-card">
+                <div class="sugg-thumb"><img src="https://images.unsplash.com/photo-1548625149-720134b81b41?w=300&q=80&fit=crop" alt=""></div>
+                <div class="sugg-body"><div class="sugg-name">Bethel AME Church</div><div class="sugg-meta">AME · Jamaica Plain · 10 min</div><div class="sugg-reason"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg> Matches your reflection</div></div>
+              </div>
+              <div class="sugg-card">
+                <div class="sugg-thumb"><img src="https://images.unsplash.com/photo-1566438480900-0609be27a4be?w=300&q=80&fit=crop" alt=""></div>
+                <div class="sugg-body"><div class="sugg-name">Harvest Christian</div><div class="sugg-meta">Non-denom · Cambridge · 18 min</div><div class="sugg-reason"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg> Newcomer programs</div></div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /tab-panel-past -->
+      </div><!-- /page-my-visits -->
+
+      <!-- ══════════════════════════════
+           PAGE: SAVED
+      ══════════════════════════════ -->
+      <div class="page" id="page-saved">
+        <div class="section-hd" style="margin-bottom:24px;"><div class="section-title">Saved Churches</div></div>
+        <div class="saves-grid">
+          <div class="save-card"><div class="save-thumb"><img src="https://images.unsplash.com/photo-1566438480900-0609be27a4be?w=400&q=80&fit=crop" alt=""><button class="save-remove" onclick="this.closest('.save-card').style.opacity='0.3'">✕</button></div><div class="save-body"><div class="save-name">New Life Community Church</div><div class="save-meta">Non-denominational · Roxbury · 8 min</div><div class="save-tags"><span class="save-tag">Contemporary</span><span class="save-tag">Young Adults</span></div><div class="save-actions"><button class="save-btn save-btn-p">Plan Visit</button><button class="save-btn save-btn-g">View</button></div></div></div>
+          <div class="save-card"><div class="save-thumb"><img src="https://images.unsplash.com/photo-1523803326055-9729b9e02e5a?w=400&q=80&fit=crop" alt=""><button class="save-remove" onclick="this.closest('.save-card').style.opacity='0.3'">✕</button></div><div class="save-body"><div class="save-name">Greater Love Baptist</div><div class="save-meta">Baptist · Dorchester · 14 min</div><div class="save-tags"><span class="save-tag">Gospel Choir</span><span class="save-tag">Family</span></div><div class="save-actions"><button class="save-btn save-btn-p">Plan Visit</button><button class="save-btn save-btn-g">View</button></div></div></div>
+          <div class="save-card"><div class="save-thumb"><img src="https://images.unsplash.com/photo-1548625149-720134b81b41?w=400&q=80&fit=crop" alt=""><button class="save-remove" onclick="this.closest('.save-card').style.opacity='0.3'">✕</button></div><div class="save-body"><div class="save-name">Emmanuel Gospel Center</div><div class="save-meta">Interdenominational · Fenway · 6 min</div><div class="save-tags"><span class="save-tag">Diverse</span><span class="save-tag">Outreach</span></div><div class="save-actions"><button class="save-btn save-btn-p">Plan Visit</button><button class="save-btn save-btn-g">View</button></div></div></div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════
+           PAGE: MATCHES (stub)
+      ══════════════════════════════ -->
+      <div class="page" id="page-matches">
+        <div class="section-hd" style="margin-bottom:24px;"><div class="section-title">My Matches</div></div>
+        <div class="empty-state" style="max-width:500px;">
+          <div class="empty-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
+          <div class="empty-title">Your matches are ready</div>
+          <div class="empty-sub">We found churches aligned with your preferences. Explore them and save your favorites.</div>
+          <button class="empty-cta" onclick="window.location.href='wirshp-search.html'">View Matches</button>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════
+           PAGE: PREFERENCES (stub)
+      ══════════════════════════════ -->
+      <div class="page" id="page-preferences">
+        <div class="section-hd" style="margin-bottom:24px;"><div class="section-title">Preferences</div></div>
+        <div class="pref-card" style="max-width:500px;">
+          <div class="pref-hd">
+            <div class="pref-title">Your match profile</div>
+            <button class="pref-edit" onclick="window.location.href='wirshp-onboarding.html'">Retake questionnaire →</button>
+          </div>
+          <div class="pref-tags">
+            <div class="ptag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/></svg> Praise &amp; Worship</div>
+            <div class="ptag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/></svg> Medium-sized</div>
+            <div class="ptag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg> Sunday AM</div>
+            <div class="ptag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> Within 20 min</div>
+            <div class="ptag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> Newcomer-friendly</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /scroll-area -->
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<script>
+// ─── Navigation ───
+function navigate(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('visible'));
+  document.getElementById(`page-${id}`).classList.add('visible');
+
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navEl = document.getElementById(`nav-${id}`);
+  if (navEl) navEl.classList.add('active');
+
+  // Journey stage update
+  const fill  = document.getElementById('journeyFill');
+  const stage = document.getElementById('journeyStage');
+  const sub   = document.getElementById('userSub');
+  if (id === 'my-visits') {
+    stage.textContent = 'Planning Visits';
+    fill.style.width  = '45%';
+    sub.textContent   = '1 visit planned · Boston';
+  } else {
+    stage.textContent = 'Exploring';
+    fill.style.width  = '15%';
+    sub.textContent   = 'Seeker · Boston';
+  }
+
+  document.querySelector('.scroll-area').scrollTop = 0;
+}
+
+// ─── Tab switching ───
+function switchTab(which) {
+  ['upcoming', 'past'].forEach(t => {
+    document.getElementById(`tab-${t}`).classList.toggle('active', t === which);
+    document.getElementById(`tab-panel-${t}`).classList.toggle('visible', t === which);
+  });
+}
+
+// ─── Mark attended ───
+function markAttended() {
+  const btn = document.getElementById('markBtn');
+  btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg> Attended ✓`;
+  btn.disabled = true; btn.style.opacity = '0.45'; btn.style.cursor = 'default';
+  // Update badge counts + switch to Past tab
+  setTimeout(() => {
+    document.getElementById('upcomingBadge').textContent = '0';
+    document.getElementById('pastBadge').textContent     = '3';
+    switchTab('past');
+  }, 700);
+}
+
+// ─── Reflection modal ───
+function openModal() {
+  document.getElementById('reflModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('reflModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function selectFeeling(el) {
+  document.querySelectorAll('.feeling-opt').forEach(f => f.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function submitReflection() {
+  closeModal();
+  const banner = document.getElementById('reflBanner');
+  if (!banner) return;
+  const done = document.createElement('div');
+  done.className = 'refl-done';
+  done.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor"/></svg> Reflection saved — thank you for taking the time.`;
+  banner.replaceWith(done);
+}
+document.getElementById('reflModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('reflModal')) closeModal();
+});
+</script>
+</body>
+</html>

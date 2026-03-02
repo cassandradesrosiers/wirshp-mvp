@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blessed Hope Tabernacle — wirshp</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cobalt-pale:   #EEF4FF;
+  --cobalt-light:  #7EB8F7;
+  --cobalt-mid:    #2952CC;
+  --cobalt:        #1B4FD8;
+  --cobalt-deep:   #0F2E8A;
+  --sg-cobalt:  #1B4FD8;
+  --sg-teal:    #0891B2;
+  --sg-sky:     #38BDF8;
+  --sg-amber:   #D97706;
+  --sg-rose:    #BE185D;
+  --sg-violet:  #7C3AED;
+  --dark:     #0D0F1A;
+  --ink:      #1A1D2E;
+  --muted:    #6B7280;
+  --border:   #E2E8F0;
+  --surface:  #F7F8FA;
+  --white:    #FFFFFF;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+  --radius-card:  20px;
+  --radius-pill:  9999px;
+  --shadow-sm:    0 1px 4px rgba(13,15,26,0.06);
+  --shadow-md:    0 4px 20px rgba(13,15,26,0.09);
+  --shadow-lg:    0 16px 48px rgba(13,15,26,0.12);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--white);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 300;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  height: 66px;
+  display: flex; align-items: center;
+  padding: 0 40px; gap: 20px;
+}
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 28px; letter-spacing: 0.04em;
+  color: var(--dark); flex-shrink: 0; cursor: pointer;
+}
+.nav-search {
+  flex: 1; max-width: 500px;
+  display: flex; align-items: center;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-pill);
+  height: 44px; overflow: hidden;
+}
+.nav-field {
+  display: flex; align-items: center; gap: 8px;
+  padding: 0 16px; flex: 1;
+}
+.nav-field + .nav-field { border-left: 1px solid var(--border); }
+.nav-field svg { color: var(--muted); flex-shrink: 0; }
+.nav-field input {
+  border: none; outline: none; background: transparent;
+  font-family: var(--font-body); font-size: 14px; color: var(--ink); width: 100%;
+}
+.nav-field input::placeholder { color: var(--muted); }
+.nav-search-btn {
+  width: 36px; height: 36px; margin: 4px;
+  background: var(--cobalt); border: none; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+}
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 20px; }
+.nav-icon-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  cursor: pointer; color: var(--muted); font-size: 11px; font-weight: 500;
+  transition: color 0.2s;
+}
+.nav-icon-btn:hover { color: var(--ink); }
+.btn-primary {
+  background: var(--cobalt); color: var(--white); border: none;
+  border-radius: var(--radius-pill); padding: 10px 22px;
+  font-family: var(--font-body); font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: background 0.2s;
+}
+.btn-primary:hover { background: var(--cobalt-mid); }
+
+/* ── BACK BAR ── */
+.back-bar {
+  padding: 16px 80px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600; color: var(--muted);
+  cursor: pointer; width: fit-content;
+  transition: color 0.2s;
+}
+.back-bar:hover { color: var(--ink); }
+
+/* ── HERO ── */
+.detail-hero {
+  position: relative;
+  height: 480px;
+  margin: 0 40px;
+  border-radius: 24px;
+  overflow: hidden;
+}
+.detail-hero img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+}
+.hero-gradient {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0) 30%,
+    rgba(0,0,0,0.3) 60%,
+    rgba(0,0,0,0.78) 100%
+  );
+}
+.hero-top-row {
+  position: absolute; top: 20px; left: 24px; right: 24px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.hero-verified {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.30);
+  border-radius: var(--radius-pill);
+  padding: 6px 12px;
+  font-size: 11px; font-weight: 700; color: white;
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.verified-dot {
+  width: 6px; height: 6px;
+  background: #22C55E; border-radius: 50%;
+  box-shadow: 0 0 6px rgba(34,197,94,0.8);
+}
+.hero-heart {
+  width: 44px; height: 44px;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.30);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: white;
+  transition: background 0.2s;
+}
+.hero-heart:hover { background: rgba(255,255,255,0.28); }
+.hero-heart.saved { color: #BE185D; }
+.hero-bottom {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 28px 28px 32px;
+}
+.hero-denomination {
+  font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.75);
+  letter-spacing: 0.06em; text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.hero-name {
+  font-family: var(--font-display);
+  font-size: 56px; line-height: 0.95;
+  letter-spacing: 0.02em;
+  color: white; margin-bottom: 16px;
+}
+.hero-meta-row {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.hero-pill {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  font-size: 12px; font-weight: 600; color: white;
+}
+
+/* ── BREADCRUMB NAV TABS ── */
+.detail-tabs {
+  position: sticky; top: 66px; z-index: 200;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 80px;
+  display: flex; gap: 0;
+}
+.detail-tab {
+  padding: 16px 0;
+  margin-right: 32px;
+  font-size: 13px; font-weight: 600;
+  color: var(--muted); cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+  text-decoration: none;
+}
+.detail-tab:hover { color: var(--ink); }
+.detail-tab.active {
+  color: var(--cobalt);
+  border-bottom-color: var(--cobalt);
+}
+
+/* ── MAIN LAYOUT ── */
+.detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 40px;
+  padding: 48px 80px;
+  align-items: start;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* ── CONTENT SECTIONS ── */
+.section-label {
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.detail-section { margin-bottom: 48px; }
+.detail-section:last-child { margin-bottom: 0; }
+
+/* About */
+.about-text {
+  font-size: 16px; color: var(--ink);
+  line-height: 1.8; max-width: 600px;
+  margin-bottom: 28px;
+}
+.about-text strong { color: var(--dark); font-weight: 600; }
+
+/* Stats grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 48px;
+}
+.stat-cell {
+  background: var(--white);
+  padding: 20px 20px;
+}
+.stat-label {
+  font-size: 11px; font-weight: 600; color: var(--muted);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.stat-value {
+  font-size: 15px; font-weight: 600; color: var(--dark);
+}
+
+/* Divider */
+.detail-divider {
+  height: 1px; background: var(--border);
+  margin-bottom: 48px;
+}
+
+/* Service times */
+.service-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.service-table th {
+  background: var(--surface);
+  padding: 12px 20px;
+  text-align: left;
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+}
+.service-table td {
+  padding: 16px 20px;
+  font-size: 14px; color: var(--ink);
+  border-bottom: 1px solid var(--border);
+}
+.service-table tr:last-child td { border-bottom: none; }
+.service-table tr:hover td { background: var(--surface); }
+.service-tag {
+  display: inline-flex; align-items: center;
+  background: var(--cobalt-pale);
+  color: var(--cobalt);
+  border-radius: var(--radius-pill);
+  padding: 3px 10px;
+  font-size: 11px; font-weight: 600;
+}
+.service-live {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(34,197,94,0.10);
+  color: #16A34A;
+  border-radius: var(--radius-pill);
+  padding: 3px 10px;
+  font-size: 11px; font-weight: 600;
+}
+.live-dot {
+  width: 5px; height: 5px;
+  background: #22C55E; border-radius: 50%;
+  animation: pulse 1.8s ease infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* Programs */
+.programs-grid {
+  display: flex; flex-wrap: wrap; gap: 10px;
+}
+.program-pill {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 10px 18px;
+  font-size: 13px; font-weight: 500; color: var(--ink);
+  transition: border-color 0.2s, background 0.2s;
+  cursor: default;
+}
+.program-pill:hover {
+  border-color: var(--cobalt-light);
+  background: var(--cobalt-pale);
+}
+.program-pill svg { color: var(--cobalt); }
+
+/* Pastors */
+.pastors-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.pastor-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex; align-items: center; gap: 16px;
+  transition: box-shadow 0.2s;
+}
+.pastor-card:hover { box-shadow: var(--shadow-md); }
+.pastor-avatar {
+  width: 56px; height: 56px; border-radius: 50%;
+  object-fit: cover; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--cobalt-pale), var(--cobalt-light));
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 22px;
+  color: var(--cobalt);
+  overflow: hidden;
+}
+.pastor-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.pastor-name {
+  font-size: 14px; font-weight: 600; color: var(--dark);
+  margin-bottom: 2px;
+}
+.pastor-role {
+  font-size: 12px; color: var(--muted); font-weight: 500;
+}
+
+/* Gallery */
+.gallery-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 12px;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.gallery-cell {
+  position: relative; overflow: hidden;
+  background: var(--surface);
+}
+.gallery-cell img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  transition: transform 0.4s ease;
+}
+.gallery-cell:hover img { transform: scale(1.04); }
+.gallery-cell:first-child { height: 260px; }
+.gallery-cell:not(:first-child) { height: 124px; }
+.gallery-more {
+  position: absolute; inset: 0;
+  background: rgba(13,15,26,0.55);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 28px;
+  color: white; letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+/* Reviews preview */
+.reviews-preview {
+  display: flex; flex-direction: column; gap: 16px;
+}
+.review-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px 24px;
+}
+.review-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 12px;
+}
+.reviewer-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  object-fit: cover;
+  background: linear-gradient(135deg, #EEF4FF, #7EB8F7);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: var(--cobalt);
+  overflow: hidden;
+}
+.reviewer-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.reviewer-name { font-size: 14px; font-weight: 600; color: var(--dark); }
+.reviewer-meta { font-size: 12px; color: var(--muted); }
+.review-text {
+  font-size: 14px; color: var(--ink);
+  line-height: 1.7;
+  font-style: italic;
+}
+.review-text::before { content: '"'; }
+.review-text::after { content: '"'; }
+.see-all-reviews {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--cobalt); font-size: 14px; font-weight: 600;
+  cursor: pointer; margin-top: 4px;
+  transition: opacity 0.2s;
+  width: fit-content;
+}
+.see-all-reviews:hover { opacity: 0.7; }
+
+/* ── SIDEBAR ── */
+.detail-sidebar { position: sticky; top: 130px; }
+
+.connect-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 16px;
+}
+.connect-label {
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.connect-info {
+  display: flex; flex-direction: column; gap: 14px;
+  margin-bottom: 24px;
+}
+.connect-row {
+  display: flex; align-items: flex-start; gap: 12px;
+  font-size: 14px; color: var(--ink);
+}
+.connect-row svg { color: var(--cobalt); flex-shrink: 0; margin-top: 1px; }
+.connect-row a {
+  color: var(--cobalt); text-decoration: none; font-weight: 500;
+  transition: opacity 0.2s;
+}
+.connect-row a:hover { opacity: 0.7; }
+.plan-visit-btn {
+  width: 100%;
+  background: var(--cobalt);
+  color: white; border: none;
+  border-radius: var(--radius-pill);
+  padding: 16px 24px;
+  font-family: var(--font-body);
+  font-size: 15px; font-weight: 700;
+  cursor: pointer; letter-spacing: 0.01em;
+  transition: background 0.2s, transform 0.15s;
+  box-shadow: 0 4px 16px rgba(27,79,216,0.28);
+}
+.plan-visit-btn:hover {
+  background: var(--cobalt-mid);
+  transform: translateY(-1px);
+}
+
+.visit-note {
+  text-align: center;
+  font-size: 12px; color: var(--muted);
+  margin-top: 12px;
+  line-height: 1.6;
+}
+
+/* Share card */
+.share-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.share-label {
+  font-size: 13px; font-weight: 600; color: var(--ink);
+}
+.share-label span { display: block; font-size: 11px; font-weight: 400; color: var(--muted); margin-top: 2px; }
+.share-icons { display: flex; gap: 8px; }
+.share-icon {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--white);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--muted);
+  transition: border-color 0.2s, color 0.2s;
+}
+.share-icon:hover { border-color: var(--cobalt-light); color: var(--cobalt); }
+
+/* Nearby churches */
+.nearby-label {
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.nearby-cards { display: flex; flex-direction: column; gap: 12px; }
+.nearby-card {
+  display: flex; gap: 14px; align-items: center;
+  padding: 14px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+.nearby-card:hover { box-shadow: var(--shadow-sm); }
+.nearby-thumb {
+  width: 56px; height: 56px; border-radius: 10px;
+  flex-shrink: 0; overflow: hidden;
+}
+.nearby-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.nearby-name { font-size: 13px; font-weight: 600; color: var(--dark); margin-bottom: 2px; }
+.nearby-meta { font-size: 12px; color: var(--muted); }
+
+/* ── RELATED SECTION ── */
+.related-section {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 56px 80px;
+}
+.related-header {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 28px;
+}
+.related-title {
+  font-family: var(--font-display);
+  font-size: 36px; letter-spacing: 0.03em;
+  color: var(--dark);
+}
+.related-link {
+  font-size: 13px; font-weight: 600; color: var(--cobalt);
+  cursor: pointer; transition: opacity 0.2s;
+}
+.related-link:hover { opacity: 0.7; }
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* Church card (mini version from homepage) */
+.church-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow 0.25s, transform 0.25s;
+}
+.church-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px);
+}
+.card-banner {
+  position: relative;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+}
+.card-banner img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  transition: transform 0.4s ease;
+}
+.church-card:hover .card-banner img { transform: scale(1.04); }
+.card-banner-gradient {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 50%, rgba(13,15,26,0.35) 100%);
+}
+.card-verified {
+  position: absolute; top: 12px; left: 12px;
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.30);
+  border-radius: var(--radius-pill);
+  padding: 4px 10px;
+  font-size: 10px; font-weight: 700; color: white;
+  letter-spacing: 0.08em;
+}
+.card-heart {
+  position: absolute; top: 10px; right: 10px;
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,0.20);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.30);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: white;
+}
+.card-body { padding: 16px; }
+.card-name { font-size: 15px; font-weight: 700; color: var(--dark); margin-bottom: 2px; }
+.card-denom { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+.card-dist { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+.card-dist svg { color: var(--cobalt); }
+.card-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.card-tag {
+  font-size: 11px; font-weight: 600; color: var(--cobalt);
+  border: 1.5px solid rgba(27,79,216,0.20);
+  border-radius: var(--radius-pill); padding: 3px 10px;
+  letter-spacing: 0.02em;
+}
+
+/* Gradient banners for cards without images */
+.bg-sg-1 { background: linear-gradient(135deg, #1B4FD8 0%, #0891B2 100%); }
+.bg-sg-2 { background: linear-gradient(135deg, #7C3AED 0%, #BE185D 100%); }
+.bg-sg-3 { background: linear-gradient(135deg, #0891B2 0%, #38BDF8 100%); }
+.card-monogram {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 40px;
+  color: rgba(255,255,255,0.9);
+}
+
+/* ── FOOTER ── */
+footer {
+  background: var(--dark);
+  color: white;
+  padding: 56px 80px 32px;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  gap: 48px; margin-bottom: 48px;
+}
+.footer-logo {
+  font-family: var(--font-display);
+  font-size: 32px; letter-spacing: 0.04em;
+  margin-bottom: 10px;
+}
+.footer-tagline {
+  font-size: 13px; color: rgba(255,255,255,0.45);
+  line-height: 1.6; margin-bottom: 24px;
+}
+.footer-col-label {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(255,255,255,0.35); margin-bottom: 16px;
+}
+.footer-link {
+  display: block; font-size: 13px; color: rgba(255,255,255,0.55);
+  cursor: pointer; margin-bottom: 10px; transition: color 0.2s;
+  text-decoration: none;
+}
+.footer-link:hover { color: white; }
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 24px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.footer-copy { font-size: 12px; color: rgba(255,255,255,0.25); }
+.footer-legal { display: flex; gap: 24px; }
+.footer-legal a {
+  font-size: 12px; color: rgba(255,255,255,0.35);
+  cursor: pointer; transition: color 0.2s; text-decoration: none;
+}
+.footer-legal a:hover { color: rgba(255,255,255,0.65); }
+
+/* ── ANIMATIONS ── */
+.fade-up {
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp 0.5s ease forwards;
+}
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up:nth-child(1) { animation-delay: 0.05s; }
+.fade-up:nth-child(2) { animation-delay: 0.10s; }
+.fade-up:nth-child(3) { animation-delay: 0.15s; }
+.fade-up:nth-child(4) { animation-delay: 0.20s; }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-logo">WIRSHP</div>
+  <div class="nav-search">
+    <div class="nav-field">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search Boston churches">
+    </div>
+    <div class="nav-field">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <input type="text" placeholder="114 Winthrop Street, 02119">
+    </div>
+    <button class="nav-search-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    </button>
+  </div>
+  <div class="nav-right">
+    <div class="nav-icon-btn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      Saves
+    </div>
+    <div class="nav-icon-btn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      Visits
+    </div>
+    <button class="btn-primary">Sign Up</button>
+  </div>
+</nav>
+
+<!-- ── BACK ── -->
+<div class="back-bar">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
+  Back to results
+</div>
+
+<!-- ── HERO ── -->
+<div class="detail-hero fade-up">
+  <img src="https://images.unsplash.com/photo-1438032005730-c779502df39b?w=1400&q=85&fit=crop" alt="Blessed Hope Tabernacle">
+  <div class="hero-gradient"></div>
+
+  <div class="hero-top-row">
+    <div class="hero-verified">
+      <span class="verified-dot"></span>
+      Wirshp Verified
+    </div>
+    <div class="hero-heart" id="heroHeart">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </div>
+  </div>
+
+  <div class="hero-bottom">
+    <div class="hero-denomination">Pentecostal · South Boston</div>
+    <div class="hero-name">Blessed Hope<br>Tabernacle</div>
+    <div class="hero-meta-row">
+      <div class="hero-pill">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        12 mins from you
+      </div>
+      <div class="hero-pill">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        ~120 members
+      </div>
+      <div class="hero-pill">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Est. 2004
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── STICKY TABS ── -->
+<div class="detail-tabs">
+  <a class="detail-tab active" href="#about">About</a>
+  <a class="detail-tab" href="#services">Services</a>
+  <a class="detail-tab" href="#programs">Programs</a>
+  <a class="detail-tab" href="#leadership">Leadership</a>
+  <a class="detail-tab" href="#photos">Photos</a>
+  <a class="detail-tab" href="#reviews">Reviews</a>
+</div>
+
+<!-- ── BODY ── -->
+<div class="detail-layout">
+
+  <!-- LEFT COLUMN -->
+  <div>
+
+    <!-- About -->
+    <div class="detail-section fade-up" id="about">
+      <div class="section-label">About</div>
+      <p class="about-text">
+        We are <strong>Blessed Hope Tabernacle Outreach Ministries</strong> — a church with the heart of a true family. Rooted in Pentecostal tradition and anchored in South Boston since 2004, we are a congregation built on authentic worship, radical welcome, and Spirit-led community.
+      </p>
+      <p class="about-text">
+        Whether you are walking through the door for the first time or have been searching for a church home for years, you will find people here who are genuinely glad you came. We believe church is not just where you go — it is who you belong to.
+      </p>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid fade-up">
+      <div class="stat-cell">
+        <div class="stat-label">Worship Style</div>
+        <div class="stat-value">Contemporary Gospel</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-label">Majority Ethnicity</div>
+        <div class="stat-value">African-American</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-label">Year Founded</div>
+        <div class="stat-value">2004</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-label">Congregation Size</div>
+        <div class="stat-value">~120 members</div>
+      </div>
+    </div>
+
+    <div class="detail-divider"></div>
+
+    <!-- Service Times -->
+    <div class="detail-section" id="services">
+      <div class="section-label">Service Times</div>
+      <table class="service-table">
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Day</th>
+            <th>Time</th>
+            <th>Language</th>
+            <th>Format</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Sunday Worship</strong></td>
+            <td>Sunday</td>
+            <td>10:00 AM</td>
+            <td>English</td>
+            <td><span class="service-live"><span class="live-dot"></span>In-Person + Stream</span></td>
+          </tr>
+          <tr>
+            <td><strong>Evening Praise</strong></td>
+            <td>Sunday</td>
+            <td>6:00 PM</td>
+            <td>English</td>
+            <td><span class="service-tag">In-Person</span></td>
+          </tr>
+          <tr>
+            <td><strong>Midweek Bible Study</strong></td>
+            <td>Wednesday</td>
+            <td>7:00 PM</td>
+            <td>English</td>
+            <td><span class="service-tag">In-Person</span></td>
+          </tr>
+          <tr>
+            <td><strong>Prayer & Intercession</strong></td>
+            <td>Friday</td>
+            <td>6:30 AM</td>
+            <td>English</td>
+            <td><span class="service-tag">In-Person</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="detail-divider"></div>
+
+    <!-- Programs -->
+    <div class="detail-section" id="programs">
+      <div class="section-label">Programs & Ministries</div>
+      <div class="programs-grid">
+        <div class="program-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          Childcare
+        </div>
+        <div class="program-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Men's Group
+        </div>
+        <div class="program-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          Women's Ministry
+        </div>
+        <div class="program-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          Youth Group
+        </div>
+        <div class="program-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+          Outreach
+        </div>
+        <div class="program-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Prayer Ministry
+        </div>
+        <div class="program-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10H3M21 6H3M21 14H3M21 18H3"/></svg>
+          Soup Kitchen
+        </div>
+        <div class="program-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          Small Groups
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-divider"></div>
+
+    <!-- Pastors -->
+    <div class="detail-section" id="leadership">
+      <div class="section-label">Pastors & Staff</div>
+      <div class="pastors-grid">
+        <div class="pastor-card">
+          <div class="pastor-avatar">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&q=80&fit=crop&crop=face" alt="Pastor James">
+          </div>
+          <div>
+            <div class="pastor-name">Pastor James L. Funches</div>
+            <div class="pastor-role">Senior Pastor</div>
+          </div>
+        </div>
+        <div class="pastor-card">
+          <div class="pastor-avatar">
+            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&q=80&fit=crop&crop=face" alt="Rev Vernice">
+          </div>
+          <div>
+            <div class="pastor-name">Rev. Vernice Funches</div>
+            <div class="pastor-role">Co-Pastor</div>
+          </div>
+        </div>
+        <div class="pastor-card">
+          <div class="pastor-avatar">
+            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&q=80&fit=crop&crop=face" alt="Deacon Will">
+          </div>
+          <div>
+            <div class="pastor-name">Deacon Will King</div>
+            <div class="pastor-role">Worship Leader</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-divider"></div>
+
+    <!-- Photos -->
+    <div class="detail-section" id="photos">
+      <div class="section-label">Photos</div>
+      <div class="gallery-row">
+        <div class="gallery-cell">
+          <img src="https://images.unsplash.com/photo-1519817914152-22d216bb9170?w=800&q=80&fit=crop" alt="Worship">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="gallery-cell">
+            <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&q=80&fit=crop" alt="Community">
+          </div>
+          <div class="gallery-cell" style="position:relative;">
+            <img src="https://images.unsplash.com/photo-1513258496099-48168024aec0?w=400&q=80&fit=crop" alt="Prayer">
+            <div class="gallery-more">+8</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-divider"></div>
+
+    <!-- Reviews -->
+    <div class="detail-section" id="reviews">
+      <div class="section-label">What visitors say</div>
+      <div class="reviews-preview">
+        <div class="review-card">
+          <div class="review-header">
+            <div class="reviewer-avatar">
+              <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&q=80&fit=crop&crop=face" alt="Reviewer">
+            </div>
+            <div>
+              <div class="reviewer-name">Aaliyah M.</div>
+              <div class="reviewer-meta">Visited 3 months ago · First-time visitor</div>
+            </div>
+          </div>
+          <div class="review-text">I walked in not knowing anyone and left feeling like I had found my people. The welcome team was incredible and the worship was so alive. I've been back every Sunday since.</div>
+        </div>
+        <div class="review-card">
+          <div class="review-header">
+            <div class="reviewer-avatar">
+              <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&q=80&fit=crop&crop=face" alt="Reviewer">
+            </div>
+            <div>
+              <div class="reviewer-name">Marcus T.</div>
+              <div class="reviewer-meta">Visited 6 months ago · Relocating seeker</div>
+            </div>
+          </div>
+          <div class="review-text">Moved to Boston for work and used wirshp to find a church. This was my third visit from the app and the first one that felt genuinely warm. Pastor Funches has a gift for making you feel seen.</div>
+        </div>
+      </div>
+      <div class="see-all-reviews" style="margin-top:16px;">
+        See all 14 reviews
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT SIDEBAR -->
+  <div class="detail-sidebar">
+
+    <!-- Connect card -->
+    <div class="connect-card">
+      <div class="connect-label">Connect</div>
+      <div class="connect-info">
+        <div class="connect-row">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <div>80 L Street, South Boston, MA 02127</div>
+        </div>
+        <div class="connect-row">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <a href="#">blessedhopetabernacle.org</a>
+        </div>
+        <div class="connect-row">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          <a href="#">facebook.com/blessedhopetab</a>
+        </div>
+        <div class="connect-row">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.9 1.17h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 14.92z"/></svg>
+          <div>(617) 555-0192</div>
+        </div>
+      </div>
+      <button class="plan-visit-btn" onclick="window.location.href='wirshp-previsit.html'">Plan A Visit</button>
+      <p class="visit-note">Let the church know you're coming. Takes 60 seconds.</p>
+    </div>
+
+    <!-- Share -->
+    <div class="share-card">
+      <div class="share-label">
+        Share this church
+        <span>Know someone searching?</span>
+      </div>
+      <div class="share-icons">
+        <div class="share-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </div>
+        <div class="share-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        </div>
+        <div class="share-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nearby -->
+    <div>
+      <div class="nearby-label">Nearby churches</div>
+      <div class="nearby-cards">
+        <div class="nearby-card">
+          <div class="nearby-thumb">
+            <img src="https://images.unsplash.com/photo-1566438480900-0609be27a4be?w=120&q=80&fit=crop" alt="church">
+          </div>
+          <div>
+            <div class="nearby-name">Charles Street AME Church</div>
+            <div class="nearby-meta">AME · 0.8 mi · Traditional Gospel</div>
+          </div>
+        </div>
+        <div class="nearby-card">
+          <div class="nearby-thumb">
+            <img src="https://images.unsplash.com/photo-1548625149-720134b81b41?w=120&q=80&fit=crop" alt="church">
+          </div>
+          <div>
+            <div class="nearby-name">Twelfth Baptist Church</div>
+            <div class="nearby-meta">Baptist · 1.2 mi · Contemporary</div>
+          </div>
+        </div>
+        <div class="nearby-card">
+          <div class="nearby-thumb">
+            <img src="https://images.unsplash.com/photo-1492571350019-22de08371fd3?w=120&q=80&fit=crop" alt="church">
+          </div>
+          <div>
+            <div class="nearby-name">Greater Love Tabernacle</div>
+            <div class="nearby-meta">Pentecostal · 1.5 mi · Bilingual</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ── YOU MIGHT ALSO LIKE ── -->
+<div class="related-section">
+  <div class="related-header">
+    <div class="related-title">SIMILAR CHURCHES</div>
+    <div class="related-link">See all →</div>
+  </div>
+  <div class="related-grid">
+
+    <div class="church-card">
+      <div class="card-banner">
+        <img src="https://images.unsplash.com/photo-1549451371-64aa98a6f660?w=600&q=80&fit=crop" alt="church">
+        <div class="card-banner-gradient"></div>
+        <div class="card-verified"><span class="verified-dot" style="width:5px;height:5px;background:#22C55E;border-radius:50%;box-shadow:0 0 5px rgba(34,197,94,0.8);"></span> Verified</div>
+        <div class="card-heart">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Greater Love Tabernacle</div>
+        <div class="card-denom">Pentecostal · Roxbury</div>
+        <div class="card-dist">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          1.5 miles away
+        </div>
+        <div class="card-tags">
+          <span class="card-tag">Bilingual</span>
+          <span class="card-tag">Youth Ministry</span>
+          <span class="card-tag">Outreach</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="church-card">
+      <div class="card-banner">
+        <img src="https://images.unsplash.com/photo-1523803326055-9729b9e02e5a?w=600&q=80&fit=crop" alt="church">
+        <div class="card-banner-gradient"></div>
+        <div class="card-verified"><span class="verified-dot" style="width:5px;height:5px;background:#22C55E;border-radius:50%;box-shadow:0 0 5px rgba(34,197,94,0.8);"></span> Verified</div>
+        <div class="card-heart">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Twelfth Baptist Church</div>
+        <div class="card-denom">Baptist · Roxbury</div>
+        <div class="card-dist">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          2.1 miles away
+        </div>
+        <div class="card-tags">
+          <span class="card-tag">Contemporary</span>
+          <span class="card-tag">Small Groups</span>
+          <span class="card-tag">Choir</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="church-card">
+      <div class="card-banner">
+        <img src="https://images.unsplash.com/photo-1545232979-8bf68ee9b1af?w=600&q=80&fit=crop" alt="church">
+        <div class="card-banner-gradient"></div>
+        <div class="card-verified"><span class="verified-dot" style="width:5px;height:5px;background:#22C55E;border-radius:50%;box-shadow:0 0 5px rgba(34,197,94,0.8);"></span> Verified</div>
+        <div class="card-heart">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Morning Star Church</div>
+        <div class="card-denom">Non-Denominational · Dorchester</div>
+        <div class="card-dist">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          2.8 miles away
+        </div>
+        <div class="card-tags">
+          <span class="card-tag">Praise & Worship</span>
+          <span class="card-tag">Childcare</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo">WIRSHP</div>
+      <div class="footer-tagline">connecting seekers to sanctuaries<br>across America</div>
+    </div>
+    <div>
+      <div class="footer-col-label">Discover</div>
+      <a class="footer-link">Churches Near You</a>
+      <a class="footer-link">Browse Denominations</a>
+      <a class="footer-link">By Neighborhood</a>
+      <a class="footer-link">By Worship Style</a>
+    </div>
+    <div>
+      <div class="footer-col-label">For Churches</div>
+      <a class="footer-link">Register Your Church</a>
+      <a class="footer-link">How It Works</a>
+      <a class="footer-link">Church Dashboard</a>
+    </div>
+    <div>
+      <div class="footer-col-label">Resources</div>
+      <a class="footer-link">For Seekers</a>
+      <a class="footer-link">Blog</a>
+      <a class="footer-link">Research</a>
+    </div>
+    <div>
+      <div class="footer-col-label">Company</div>
+      <a class="footer-link">About wirshp</a>
+      <a class="footer-link">Safety and Trust</a>
+      <a class="footer-link">Contact</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">2026 wirshp, Inc. All rights reserved.</span>
+    <div class="footer-legal">
+      <a>Privacy Policy</a>
+      <a>Terms of Service</a>
+      <a>Safety</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Heart toggle
+  document.getElementById('heroHeart').addEventListener('click', function() {
+    this.classList.toggle('saved');
+    const svg = this.querySelector('svg');
+    if (this.classList.contains('saved')) {
+      svg.setAttribute('fill', '#BE185D');
+      svg.setAttribute('stroke', '#BE185D');
+    } else {
+      svg.setAttribute('fill', 'none');
+      svg.setAttribute('stroke', 'currentColor');
+    }
+  });
+
+  // Active tab on scroll
+  const tabs = document.querySelectorAll('.detail-tab');
+  const sections = ['about','services','programs','leadership','photos','reviews'];
+  
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && window.scrollY >= el.offsetTop - 140) current = id;
+    });
+    tabs.forEach(tab => {
+      tab.classList.toggle('active', tab.getAttribute('href') === '#' + current);
+    });
+  });
+
+  // Card hearts
+  document.querySelectorAll('.card-heart').forEach(heart => {
+    heart.addEventListener('click', e => {
+      e.stopPropagation();
+      heart.classList.toggle('saved');
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan Your Visit — wirshp</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --cobalt-pale:#EEF4FF;--cobalt-light:#7EB8F7;--cobalt-mid:#2952CC;--cobalt:#1B4FD8;--cobalt-deep:#0F2E8A;
+  --amber:#D97706;--green:#059669;--green-pale:#F0FDF4;--green-border:#BBF7D0;
+  --dark:#0D0F1A;--ink:#1A1D2E;--muted:#6B7280;--border:#E2E8F0;--border-mid:#D1D9E6;--surface:#F7F8FA;--white:#FFFFFF;
+  --font-display:'Bebas Neue',sans-serif;--font-body:'DM Sans',sans-serif;
+  --radius-card:20px;--radius-pill:9999px;
+  --shadow-sm:0 1px 4px rgba(13,15,26,0.06);--shadow-md:0 4px 20px rgba(13,15,26,0.09);--shadow-lg:0 16px 48px rgba(13,15,26,0.14);
+}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font-body);background:var(--white);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh;}
+
+nav{position:sticky;top:0;z-index:300;background:rgba(255,255,255,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{font-family:var(--font-display);font-size:22px;letter-spacing:0.04em;color:var(--cobalt);cursor:pointer;}
+.nav-back{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;background:none;border:none;font-family:var(--font-body);transition:color 0.15s;}
+.nav-back:hover{color:var(--ink);}
+.nav-back svg{width:15px;height:15px;flex-shrink:0;}
+
+.title-bar{border-bottom:1px solid var(--border);padding:28px 32px 24px;}
+.title-bar-inner{max-width:1120px;margin:0 auto;}
+.page-title{font-family:var(--font-display);font-size:34px;letter-spacing:0.02em;color:var(--ink);line-height:1;}
+.page-subtitle{font-size:14px;color:var(--muted);margin-top:4px;}
+
+.layout{max-width:1120px;margin:0 auto;padding:36px 32px 80px;display:grid;grid-template-columns:1fr 400px;gap:64px;align-items:start;}
+
+/* LEFT */
+.left-col{min-width:0;}
+.form-section{padding-bottom:28px;border-bottom:1px solid var(--border);margin-bottom:28px;}
+.form-section:last-child{border-bottom:none;padding-bottom:0;}
+.section-heading{font-size:18px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.section-sub{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5;}
+
+.date-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none;-webkit-overflow-scrolling:touch;cursor:grab;}
+.date-row:active{cursor:grabbing;}
+.date-row::-webkit-scrollbar{display:none;}
+.date-chip{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;padding:14px 18px;border-radius:14px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;transition:all 0.15s;min-width:72px;}
+.date-chip:hover{border-color:var(--ink);}
+.date-chip.selected{border-color:var(--ink);background:var(--surface);}
+.date-day{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.date-num{font-size:24px;font-weight:700;color:var(--ink);line-height:1.1;}
+.date-month{font-size:11px;color:var(--muted);margin-top:1px;}
+.date-chip.selected .date-day,.date-chip.selected .date-num,.date-chip.selected .date-month{color:var(--cobalt);}
+.date-chip.selected{border-color:var(--cobalt);background:var(--cobalt-pale);}
+
+/* Calendar (unused now) */
+
+/* Time */
+.time-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.time-chip{padding:14px 10px;border-radius:14px;border:1.5px solid var(--border);background:var(--white);text-align:center;cursor:pointer;transition:border-color 0.15s,background 0.15s;}
+.time-chip:hover{border-color:var(--ink);}
+.time-chip.selected{border-color:var(--ink);background:var(--surface);}
+.time-val{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.time-type{font-size:12px;color:var(--muted);}
+
+/* Reminder */
+.reminder-row{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border:1.5px solid var(--border);border-radius:14px;}
+.reminder-left{display:flex;align-items:center;gap:14px;}
+.reminder-icon-wrap{width:40px;height:40px;border-radius:12px;background:var(--cobalt-pale);display:flex;align-items:center;justify-content:center;color:var(--cobalt);flex-shrink:0;}
+.reminder-icon-wrap svg{width:18px;height:18px;}
+.reminder-label{font-size:14px;font-weight:600;color:var(--ink);}
+.reminder-desc{font-size:12px;color:var(--muted);margin-top:1px;}
+.toggle{width:46px;height:26px;border-radius:13px;background:var(--border-mid);border:none;cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0;}
+.toggle.on{background:var(--cobalt);}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:white;box-shadow:0 1px 3px rgba(0,0,0,0.2);transition:transform 0.2s;}
+.toggle.on::after{transform:translateX(20px);}
+
+/* Nerves */
+.nerves-box{background:var(--cobalt-pale);border:1px solid rgba(27,79,216,0.15);border-radius:14px;padding:20px 22px;display:flex;gap:14px;align-items:flex-start;}
+.nerves-icon-wrap{width:36px;height:36px;border-radius:10px;background:rgba(27,79,216,0.12);display:flex;align-items:center;justify-content:center;color:var(--cobalt);flex-shrink:0;}
+.nerves-icon-wrap svg{width:16px;height:16px;}
+.nerves-title{font-size:13px;font-weight:700;color:var(--cobalt-deep);margin-bottom:4px;}
+.nerves-text{font-size:13px;color:var(--cobalt-mid);line-height:1.6;}
+.nerves-stat{display:inline-flex;align-items:center;gap:5px;margin-top:10px;font-size:11px;font-weight:700;color:var(--cobalt);background:rgba(27,79,216,0.1);border-radius:var(--radius-pill);padding:4px 10px;}
+.nerves-stat svg{width:12px;height:12px;}
+
+/* CTA */
+.cta-row{display:flex;gap:10px;align-items:center;margin-top:8px;}
+.btn-secondary{padding:14px 24px;background:none;border:1.5px solid var(--border);border-radius:var(--radius-pill);font-family:var(--font-body);font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;transition:border-color 0.15s,color 0.15s;}
+.btn-secondary:hover{border-color:var(--ink);color:var(--ink);}
+.btn-primary-cta{flex:1;padding:14px 28px;background:var(--cobalt);border:none;border-radius:var(--radius-pill);font-family:var(--font-body);font-size:15px;font-weight:700;color:white;cursor:pointer;transition:background 0.2s,transform 0.15s;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 16px rgba(27,79,216,0.3);}
+.btn-primary-cta:hover{background:var(--cobalt-mid);transform:translateY(-1px);}
+.btn-primary-cta svg{width:16px;height:16px;}
+
+/* RIGHT */
+.right-col{position:sticky;top:88px;}
+.church-card{border:1.5px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:var(--shadow-md);margin-bottom:16px;}
+.church-card-img{width:100%;height:180px;object-fit:cover;display:block;}
+.church-card-body{padding:20px 22px;}
+.church-card-name{font-size:17px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.church-card-meta{font-size:13px;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.church-card-meta svg{width:14px;height:14px;color:var(--cobalt);flex-shrink:0;}
+.church-card-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;background:var(--cobalt-pale);color:var(--cobalt);border-radius:var(--radius-pill);padding:4px 10px;margin-bottom:10px;}
+.church-verified-w{font-family:var(--font-display);font-size:15px;letter-spacing:0.04em;line-height:1;color:var(--cobalt);}
+.card-divider{height:1px;background:var(--border);margin:16px 0;}
+.logistics-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+.logistic-item{display:flex;gap:10px;align-items:flex-start;}
+.logistic-icon{width:30px;height:30px;border-radius:8px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--muted);}
+.logistic-icon svg{width:14px;height:14px;}
+.logistic-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:2px;}
+.logistic-value{font-size:13px;font-weight:600;color:var(--ink);line-height:1.3;}
+.logistic-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+
+.first-visit-strip{background:var(--green-pale);border:1px solid var(--green-border);border-radius:14px;padding:14px 18px;display:flex;gap:12px;align-items:center;margin-bottom:16px;}
+.fv-icon{width:32px;height:32px;border-radius:9px;background:#D1FAE5;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--green);}
+.fv-icon svg{width:16px;height:16px;}
+.fv-title{font-size:12px;font-weight:700;color:#065F46;}
+.fv-sub{font-size:12px;color:#047857;line-height:1.4;margin-top:1px;}
+
+.expect-card{border:1.5px solid var(--border);border-radius:20px;overflow:hidden;}
+.expect-card-header{padding:18px 22px 14px;border-bottom:1px solid var(--border);}
+.expect-card-title{font-size:15px;font-weight:700;color:var(--ink);}
+.expect-list{padding:0;}
+.expect-item{display:flex;gap:14px;align-items:flex-start;padding:14px 22px;border-bottom:1px solid var(--border);}
+.expect-item:last-child{border-bottom:none;}
+.expect-step-num{width:22px;height:22px;border-radius:50%;background:var(--cobalt-pale);color:var(--cobalt);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.expect-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;}
+.expect-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+.vibe-section{padding:16px 22px;border-top:1px solid var(--border);}
+.vibe-label{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.vibe-label svg{width:12px;height:12px;color:var(--amber);}
+.vibe-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.vibe-tag{font-size:11px;font-weight:600;color:var(--cobalt);border:1.5px solid rgba(27,79,216,0.2);background:var(--cobalt-pale);border-radius:var(--radius-pill);padding:3px 10px;}
+
+/* Confirm overlay */
+.confirm-overlay{position:fixed;inset:0;background:rgba(13,15,26,0.55);display:flex;align-items:center;justify-content:center;z-index:500;opacity:0;pointer-events:none;transition:opacity 0.25s;padding:24px;}
+.confirm-overlay.show{opacity:1;pointer-events:all;}
+.confirm-card{background:white;border-radius:24px;padding:36px 32px;max-width:400px;width:100%;box-shadow:var(--shadow-lg);transform:translateY(24px);transition:transform 0.3s;}
+.confirm-overlay.show .confirm-card{transform:translateY(0);}
+.confirm-check{width:52px;height:52px;border-radius:50%;background:var(--cobalt-pale);display:flex;align-items:center;justify-content:center;color:var(--cobalt);margin-bottom:18px;}
+.confirm-check svg{width:24px;height:24px;}
+.confirm-title{font-family:var(--font-display);font-size:34px;letter-spacing:0.02em;color:var(--ink);margin-bottom:6px;}
+.confirm-sub{font-size:14px;color:var(--muted);line-height:1.5;margin-bottom:24px;}
+.confirm-details{background:var(--surface);border-radius:14px;padding:16px 18px;margin-bottom:22px;display:flex;flex-direction:column;gap:12px;}
+.confirm-row{display:flex;gap:12px;align-items:center;}
+.confirm-row-icon{width:28px;height:28px;border-radius:8px;background:var(--white);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--muted);}
+.confirm-row-icon svg{width:13px;height:13px;}
+.confirm-row-text{font-size:13px;font-weight:600;color:var(--ink);}
+.confirm-cta{width:100%;padding:14px;background:var(--cobalt);border:none;border-radius:var(--radius-pill);font-family:var(--font-body);font-size:15px;font-weight:700;color:white;cursor:pointer;transition:background 0.15s;}
+.confirm-cta:hover{background:var(--cobalt-mid);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.left-col>*{animation:fadeUp 0.35s ease both;}
+.left-col>*:nth-child(1){animation-delay:0.04s;}
+.left-col>*:nth-child(2){animation-delay:0.08s;}
+.left-col>*:nth-child(3){animation-delay:0.12s;}
+.left-col>*:nth-child(4){animation-delay:0.16s;}
+.left-col>*:nth-child(5){animation-delay:0.20s;}
+.right-col{animation:fadeUp 0.4s ease 0.1s both;}
+</style>
+</head>
+<body>
+
+<nav>
+  <button class="nav-back" onclick="window.history.back()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
+    Back to church
+  </button>
+  <div class="nav-logo">wirshp</div>
+</nav>
+
+<div class="title-bar">
+  <div class="title-bar-inner">
+    <div class="page-title">Plan Your Visit</div>
+    <div class="page-subtitle">Blessed Hope Tabernacle · Dorchester, MA</div>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- LEFT COLUMN -->
+  <div class="left-col">
+
+    <!-- 1. DATE CHIPS -->
+    <div class="form-section">
+      <div class="section-heading">Pick a Sunday</div>
+      <div class="section-sub">Select the date you'd like to visit.</div>
+      <div class="date-row" id="dateRow"></div>
+    </div>
+
+    <!-- 2. SERVICE TIME -->
+    <div class="form-section">
+      <div class="section-heading">Choose a service time</div>
+      <div class="section-sub">Select the service that works best for you.</div>
+      <div class="time-grid">
+        <div class="time-chip selected" onclick="selectTime(this)" data-val="8:00 AM" data-type="English">
+          <div class="time-val">8:00 AM</div>
+          <div class="time-type">English</div>
+        </div>
+        <div class="time-chip" onclick="selectTime(this)" data-val="11:00 AM" data-type="Spanish">
+          <div class="time-val">11:00 AM</div>
+          <div class="time-type">Spanish</div>
+        </div>
+        <div class="time-chip" onclick="selectTime(this)" data-val="Not sure" data-type="Decide later">
+          <div class="time-val">Not sure</div>
+          <div class="time-type">Decide later</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. REMINDER -->
+    <div class="form-section">
+      <div class="section-heading">Reminder</div>
+      <div class="reminder-row">
+        <div class="reminder-left">
+          <div class="reminder-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </div>
+          <div>
+            <div class="reminder-label">Saturday evening reminder</div>
+            <div class="reminder-desc">We'll nudge you the night before so you feel ready</div>
+          </div>
+        </div>
+        <button class="toggle on" onclick="this.classList.toggle('on')"></button>
+      </div>
+    </div>
+
+    <!-- 4. NERVES -->
+    <div class="form-section">
+      <div class="nerves-box">
+        <div class="nerves-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div>
+          <div class="nerves-title">If you're feeling nervous — that's completely normal.</div>
+          <div class="nerves-text">Walking into a new space, especially one this personal, can feel like a lot. You don't have to have answers or fit in right away. Showing up is the whole thing.</div>
+          <div class="nerves-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            46% of seekers say pre-visit anxiety is their biggest barrier
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. CTA -->
+    <div class="cta-row">
+      <button class="btn-secondary" onclick="window.history.back()">Maybe later</button>
+      <button class="btn-primary-cta" onclick="confirmVisit()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 2v4m8-4v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg>
+        Add to My Visits
+      </button>
+    </div>
+
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="right-col">
+
+    <div class="church-card">
+      <img class="church-card-img" src="https://images.unsplash.com/photo-1438032005730-c779502df39b?w=800&q=85&fit=crop" alt="Blessed Hope Tabernacle">
+      <div class="church-card-body">
+        <div class="church-card-badge">
+          <span class="church-verified-w">w</span> Verified on wirshp
+        </div>
+        <div class="church-card-name">Blessed Hope Tabernacle</div>
+        <div class="church-card-meta">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Pentecostal &middot; Dorchester, MA &middot; 14 min away
+        </div>
+        <div class="card-divider"></div>
+        <div class="logistics-grid">
+          <div class="logistic-item">
+            <div class="logistic-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div>
+              <div class="logistic-label">Services</div>
+              <div class="logistic-value">8 AM &amp; 11 AM</div>
+              <div class="logistic-sub">~90 min each</div>
+            </div>
+          </div>
+          <div class="logistic-item">
+            <div class="logistic-icon" style="font-family:var(--font-body);font-size:15px;font-weight:700;color:var(--muted);">P</div>
+            <div>
+              <div class="logistic-label">Parking</div>
+              <div class="logistic-value">Free on-site</div>
+              <div class="logistic-sub">Enter via Geneva Ave</div>
+            </div>
+          </div>
+          <div class="logistic-item">
+            <div class="logistic-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div>
+              <div class="logistic-label">Address</div>
+              <div class="logistic-value">419 Blue Hill Ave</div>
+              <div class="logistic-sub">Dorchester</div>
+            </div>
+          </div>
+          <div class="logistic-item">
+            <div class="logistic-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg>
+            </div>
+            <div>
+              <div class="logistic-label">Dress Code</div>
+              <div class="logistic-value">Smart casual</div>
+              <div class="logistic-sub">Come as you are</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="first-visit-strip">
+      <div class="fv-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div class="fv-text">
+        <div class="fv-title">First-time visitors are always welcome</div>
+        <div class="fv-sub">No sign-up, no pressure. Arrive, sit, and leave on your terms.</div>
+      </div>
+    </div>
+
+    <div class="expect-card">
+      <div class="expect-card-header">
+        <div class="expect-card-title">What to expect</div>
+      </div>
+      <div class="expect-list">
+        <div class="expect-item">
+          <div class="expect-step-num">1</div>
+          <div>
+            <div class="expect-title">Arrive a few minutes early</div>
+            <div class="expect-desc">Greeters at the entrance can answer questions. No need to sign anything or introduce yourself.</div>
+          </div>
+        </div>
+        <div class="expect-item">
+          <div class="expect-step-num">2</div>
+          <div>
+            <div class="expect-title">Worship &amp; message (~90 min)</div>
+            <div class="expect-desc">Gospel worship opens the service, followed by a sermon. Expressive — but participation is never required.</div>
+          </div>
+        </div>
+        <div class="expect-item">
+          <div class="expect-step-num">3</div>
+          <div>
+            <div class="expect-title">Look for the Welcome Table</div>
+            <div class="expect-desc">After the service a team member near the exit can connect you — no pressure to commit.</div>
+          </div>
+        </div>
+        <div class="expect-item">
+          <div class="expect-step-num">4</div>
+          <div>
+            <div class="expect-title">Come back to reflect</div>
+            <div class="expect-desc">wirshp will prompt you to log how it felt. No wrong answers. Your journey is yours.</div>
+          </div>
+        </div>
+      </div>
+      <div class="vibe-section">
+        <div class="vibe-label">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Matched to your preferences
+        </div>
+        <div class="vibe-tags">
+          <span class="vibe-tag">Gospel Choir</span>
+          <span class="vibe-tag">Family-Friendly</span>
+          <span class="vibe-tag">Community-Focused</span>
+          <span class="vibe-tag">Expressive Worship</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CONFIRM OVERLAY -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-card">
+    <div class="confirm-check">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>
+    </div>
+    <div class="confirm-title">You're all set.</div>
+    <div class="confirm-sub">Your visit is saved. We'll remind you the evening before so you feel ready to go.</div>
+    <div class="confirm-details">
+      <div class="confirm-row">
+        <div class="confirm-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <span class="confirm-row-text">Blessed Hope Tabernacle</span>
+      </div>
+      <div class="confirm-row">
+        <div class="confirm-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <span class="confirm-row-text" id="confirmDate">Sunday, March 8</span>
+      </div>
+      <div class="confirm-row">
+        <div class="confirm-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <span class="confirm-row-text" id="confirmTime">8:00 AM · English</span>
+      </div>
+      <div class="confirm-row">
+        <div class="confirm-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <span class="confirm-row-text">419 Blue Hill Ave, Dorchester</span>
+      </div>
+    </div>
+    <button class="confirm-cta" onclick="goToDashboard()">View My Visits Dashboard</button>
+  </div>
+</div>
+
+<script>
+const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTH_NAMES=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function getUpcomingSundays(count=8){
+  const sundays=[],now=new Date();now.setHours(0,0,0,0);
+  const dow=now.getDay(),daysUntil=dow===0?7:7-dow;
+  let next=new Date(now);next.setDate(now.getDate()+daysUntil);
+  for(let i=0;i<count;i++){const d=new Date(next);d.setDate(next.getDate()+i*7);sundays.push(d);}
+  return sundays;
+}
+
+const dateRow=document.getElementById('dateRow');
+const sundays=getUpcomingSundays(8);
+let selectedDate=sundays[0];
+
+sundays.forEach((d,i)=>{
+  const chip=document.createElement('div');
+  chip.className='date-chip'+(i===0?' selected':'');
+  chip.innerHTML=`<div class="date-day">${DAYS[d.getDay()]}</div><div class="date-num">${d.getDate()}</div><div class="date-month">${MONTHS[d.getMonth()]}</div>`;
+  chip.addEventListener('click',()=>{
+    document.querySelectorAll('.date-chip').forEach(c=>c.classList.remove('selected'));
+    chip.classList.add('selected');selectedDate=d;
+  });
+  dateRow.appendChild(chip);
+});
+
+let selectedTime='8:00 AM · English';
+function selectTime(el){
+  document.querySelectorAll('.time-chip').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  const val=el.dataset.val,type=el.dataset.type;
+  selectedTime=val==='Not sure'?'Time TBD — decide later':`${val} · ${type}`;
+}
+
+function confirmVisit(){
+  document.getElementById('confirmDate').textContent='Sunday, '+MONTH_NAMES[selectedDate.getMonth()]+' '+selectedDate.getDate();
+  document.getElementById('confirmTime').textContent=selectedTime;
+  document.getElementById('confirmOverlay').classList.add('show');
+}
+
+function goToDashboard(){window.location.href='wirshp-dashboard.html';}
+document.getElementById('confirmOverlay').addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');});
+</script>
+</body>
+</html>

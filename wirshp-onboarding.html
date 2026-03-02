@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Your Church Home — wirshp</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cobalt-pale:  #EEF4FF;
+  --cobalt-light: #7EB8F7;
+  --cobalt-mid:   #2952CC;
+  --cobalt:       #1B4FD8;
+  --cobalt-deep:  #0F2E8A;
+  --dark:   #0D0F1A;
+  --ink:    #1A1D2E;
+  --muted:  #6B7280;
+  --border: #E2E8F0;
+  --surface:#F7F8FA;
+  --white:  #FFFFFF;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+  --radius-pill:  9999px;
+}
+
+html, body {
+  height: 100%; min-height: 100vh;
+  font-family: var(--font-body);
+  background: #F4F7FF;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+/* ─── AMBIENT BACKGROUND ─── */
+.ambient {
+  position: fixed; inset: 0;
+  pointer-events: none; overflow: hidden;
+  z-index: 0;
+}
+.amb {
+  position: absolute; border-radius: 50%;
+  filter: blur(90px);
+  transition: opacity 1.2s ease;
+}
+.amb-1 {
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(27,79,216,0.09) 0%, transparent 70%);
+  top: -250px; left: -180px;
+}
+.amb-2 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(8,145,178,0.07) 0%, transparent 70%);
+  bottom: -100px; right: -100px;
+}
+.amb-3 {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(124,58,237,0.05) 0%, transparent 70%);
+  top: 40%; left: 60%;
+}
+.amb-4 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(190,24,93,0.04) 0%, transparent 70%);
+  top: 20%; right: 10%;
+}
+
+/* Subtle grain overlay */
+.grain {
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* ─── NAV ─── */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 40px;
+}
+.topbar-logo {
+  font-family: var(--font-display);
+  font-size: 24px; letter-spacing: 0.05em;
+  color: var(--ink);
+}
+.topbar-skip {
+  font-size: 13px; font-weight: 500; color: var(--muted);
+  cursor: pointer; transition: color 0.2s;
+  background: none; border: none; padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  transition: background 0.2s, color 0.2s;
+}
+.topbar-skip:hover { background: rgba(27,79,216,0.06); color: var(--cobalt); }
+.topbar-skip.hidden { opacity: 0; pointer-events: none; }
+
+/* ─── PROGRESS ─── */
+.progress-wrap {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 99;
+  height: 2px; background: transparent;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--cobalt), var(--cobalt-light));
+  transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+  width: 0%;
+}
+
+/* ─── SCREENS WRAPPER ─── */
+.screens {
+  position: fixed; inset: 0;
+  z-index: 1;
+}
+.screen {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  padding: 80px 24px 60px;
+  transition: transform 0.55s cubic-bezier(0.4,0,0.2,1),
+              opacity 0.4s ease;
+  will-change: transform, opacity;
+}
+.screen.out-left  { transform: translateX(-80px); opacity: 0; pointer-events: none; }
+.screen.out-right { transform: translateX(80px);  opacity: 0; pointer-events: none; }
+.screen.active    { transform: translateX(0);      opacity: 1; pointer-events: all; }
+
+/* ─── INTRO SCREENS ─── */
+.intro-wrap {
+  text-align: center;
+  max-width: 640px;
+  width: 100%;
+  padding: 0 20px;
+  animation: floatIn 0.8s cubic-bezier(0.4,0,0.2,1) both;
+}
+@keyframes floatIn {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.intro-eyebrow {
+  font-size: 11px; font-weight: 700; color: var(--cobalt);
+  letter-spacing: 0.16em; text-transform: uppercase;
+  margin-bottom: 20px;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.intro-eyebrow::before,
+.intro-eyebrow::after {
+  content: '';
+  width: 32px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cobalt-light));
+}
+.intro-eyebrow::after {
+  background: linear-gradient(90deg, var(--cobalt-light), transparent);
+}
+
+.intro-headline {
+  font-family: var(--font-display);
+  font-size: clamp(52px, 8vw, 84px);
+  line-height: 0.92;
+  letter-spacing: 0.02em;
+  color: var(--dark);
+  margin-bottom: 28px;
+}
+.intro-headline .accent { color: var(--cobalt); }
+
+.intro-body {
+  font-size: 18px; font-weight: 400;
+  color: var(--muted); line-height: 1.75;
+  max-width: 480px; margin: 0 auto 48px;
+}
+
+/* Intro feature list */
+.intro-features {
+  display: flex; flex-direction: column; gap: 16px;
+  margin-bottom: 48px; text-align: left;
+  max-width: 420px; margin-left: auto; margin-right: auto;
+}
+.intro-feat {
+  display: flex; align-items: flex-start; gap: 14px;
+}
+.feat-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--cobalt-pale);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 2px;
+}
+.feat-icon svg { color: var(--cobalt); }
+.feat-text strong { display: block; font-size: 14px; font-weight: 600; color: var(--dark); margin-bottom: 2px; }
+.feat-text span { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+/* Trust note */
+.trust-note {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.9);
+  border-radius: var(--radius-pill);
+  padding: 10px 20px;
+  font-size: 12px; font-weight: 500; color: var(--muted);
+  margin-bottom: 32px;
+}
+.trust-note svg { color: var(--cobalt); flex-shrink: 0; }
+
+/* Steps indicator for intro */
+.intro-steps {
+  display: flex; gap: 16px; justify-content: center;
+  margin-bottom: 48px;
+}
+.intro-step-item {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; font-weight: 500; color: var(--muted);
+}
+.intro-step-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--cobalt-pale);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: var(--cobalt);
+  flex-shrink: 0;
+}
+.intro-step-divider { width: 20px; height: 1px; background: var(--border); }
+
+/* ─── CTA BUTTONS ─── */
+.cta-primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  background: var(--cobalt); color: white; border: none;
+  border-radius: var(--radius-pill);
+  padding: 18px 40px;
+  font-family: var(--font-body); font-size: 16px; font-weight: 700;
+  cursor: pointer; letter-spacing: 0.01em;
+  box-shadow: 0 6px 28px rgba(27,79,216,0.28);
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+.cta-primary:hover {
+  background: var(--cobalt-mid);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 36px rgba(27,79,216,0.36);
+}
+.cta-primary:active { transform: translateY(0); }
+.cta-primary.full { width: 100%; }
+
+/* ─── GLASS QUESTION CARD ─── */
+.glass-card {
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: blur(48px) saturate(200%);
+  -webkit-backdrop-filter: blur(48px) saturate(200%);
+  border: 1px solid rgba(255,255,255,0.92);
+  border-radius: 32px;
+  box-shadow:
+    0 8px 48px rgba(27,79,216,0.07),
+    0 2px 8px rgba(13,15,26,0.04),
+    inset 0 1px 0 rgba(255,255,255,0.9);
+  padding: 52px 56px;
+  max-width: 600px; width: 100%;
+  position: relative;
+}
+
+/* Question anatomy */
+.q-section {
+  font-size: 10px; font-weight: 700; color: var(--cobalt);
+  letter-spacing: 0.14em; text-transform: uppercase;
+  margin-bottom: 8px;
+  opacity: 0.8;
+}
+.q-microcopy {
+  font-size: 12px; color: var(--muted); font-style: italic;
+  margin-bottom: 24px;
+}
+.q-title {
+  font-family: var(--font-display);
+  font-size: 38px; line-height: 1.0; letter-spacing: 0.02em;
+  color: var(--dark); margin-bottom: 8px;
+}
+.q-sub {
+  font-size: 14px; color: var(--muted); line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+/* Answer options — card style */
+.options-grid {
+  display: flex; flex-direction: column; gap: 10px;
+  margin-bottom: 28px;
+}
+.opt {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 18px;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.6);
+  cursor: pointer; font-size: 14px; font-weight: 500; color: var(--ink);
+  transition: border-color 0.18s, background 0.18s, transform 0.12s;
+  user-select: none;
+}
+.opt:hover { border-color: var(--cobalt-light); background: rgba(238,244,255,0.6); }
+.opt.selected { border-color: var(--cobalt); background: rgba(238,244,255,0.85); }
+.opt.selected .opt-check { border-color: var(--cobalt); background: var(--cobalt); }
+.opt.selected .opt-check::after { opacity: 1; }
+.opt:active { transform: scale(0.99); }
+.opt-check {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.18s, background 0.18s;
+}
+.opt-check::after {
+  content: '';
+  width: 7px; height: 7px;
+  background: white; border-radius: 50%;
+  opacity: 0; transition: opacity 0.15s;
+}
+.opt-icon { color: var(--muted); flex-shrink: 0; }
+.opt.selected .opt-icon { color: var(--cobalt); }
+.opt-label { flex: 1; }
+.opt-label strong { display: block; font-size: 14px; color: var(--dark); }
+.opt-label span   { display: block; font-size: 12px; color: var(--muted); line-height: 1.4; margin-top: 1px; }
+
+/* Options — 2-column chip grid */
+.chips-grid {
+  display: flex; flex-wrap: wrap; gap: 9px;
+  margin-bottom: 28px;
+}
+.chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 10px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: rgba(255,255,255,0.65);
+  font-size: 13px; font-weight: 500; color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s, transform 0.1s;
+  user-select: none;
+}
+.chip:hover { border-color: var(--cobalt-light); background: rgba(238,244,255,0.7); }
+.chip.selected { border-color: var(--cobalt); background: rgba(238,244,255,0.9); color: var(--cobalt); font-weight: 600; }
+.chip:active { transform: scale(0.97); }
+
+/* Scale / importance */
+.scale-wrap { margin-bottom: 28px; }
+.scale-label-q { font-size: 13px; font-weight: 600; color: var(--dark); margin-bottom: 20px; }
+.scale-items { display: flex; flex-direction: column; gap: 8px; }
+.scale-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.6);
+  cursor: pointer; transition: border-color 0.18s, background 0.18s;
+}
+.scale-item:hover { border-color: var(--cobalt-light); background: rgba(238,244,255,0.6); }
+.scale-item.selected { border-color: var(--cobalt); background: rgba(238,244,255,0.85); }
+.scale-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--border); flex-shrink: 0;
+  transition: background 0.18s;
+}
+.scale-item.selected .scale-dot { background: var(--cobalt); box-shadow: 0 0 0 3px rgba(27,79,216,0.15); }
+.scale-label { font-size: 13px; color: var(--ink); }
+
+/* Free text */
+.free-text {
+  width: 100%;
+  background: rgba(255,255,255,0.7);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 20px;
+  font-family: var(--font-body); font-size: 15px; color: var(--ink);
+  line-height: 1.7; resize: none; min-height: 120px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  margin-bottom: 28px;
+}
+.free-text:focus {
+  border-color: var(--cobalt);
+  box-shadow: 0 0 0 3px rgba(27,79,216,0.08);
+}
+.free-text::placeholder { color: var(--muted); font-style: italic; }
+
+/* Step actions */
+.q-actions {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.q-skip {
+  font-size: 13px; font-weight: 500; color: var(--muted);
+  cursor: pointer; background: none; border: none; padding: 0;
+  transition: color 0.2s;
+}
+.q-skip:hover { color: var(--ink); }
+.q-skip.hidden { visibility: hidden; }
+
+/* Step counter */
+.q-counter {
+  position: absolute; top: -48px; right: 0;
+  font-size: 12px; font-weight: 600; color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+/* ─── COMPLETION ─── */
+.completion-wrap {
+  text-align: center; max-width: 580px; width: 100%;
+}
+.completion-glow {
+  width: 96px; height: 96px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--cobalt), #38BDF8);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 32px;
+  box-shadow:
+    0 0 0 16px rgba(27,79,216,0.06),
+    0 0 0 32px rgba(27,79,216,0.03),
+    0 8px 40px rgba(27,79,216,0.35);
+  animation: glowPop 0.7s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes glowPop {
+  from { transform: scale(0.3); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+.completion-headline {
+  font-family: var(--font-display);
+  font-size: clamp(48px, 7vw, 72px);
+  line-height: 0.92; letter-spacing: 0.02em;
+  color: var(--dark); margin-bottom: 16px;
+  animation: floatIn 0.6s 0.2s ease both;
+}
+.completion-sub {
+  font-size: 17px; color: var(--muted); line-height: 1.7;
+  max-width: 420px; margin: 0 auto 40px;
+  animation: floatIn 0.6s 0.35s ease both;
+}
+.match-orbs {
+  display: flex; justify-content: center; margin-bottom: 40px;
+  animation: floatIn 0.6s 0.45s ease both;
+}
+.orb {
+  width: 64px; height: 64px; border-radius: 50%;
+  border: 3px solid white;
+  overflow: hidden; margin-left: -14px;
+  box-shadow: 0 4px 16px rgba(13,15,26,0.12);
+}
+.orb:first-child { margin-left: 0; }
+.orb img { width: 100%; height: 100%; object-fit: cover; }
+.orb-count {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--cobalt); border: 3px solid white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: white;
+  margin-left: -14px;
+  box-shadow: 0 4px 16px rgba(27,79,216,0.35);
+}
+.pref-tags {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+  margin-bottom: 40px;
+  animation: floatIn 0.6s 0.5s ease both;
+}
+.pref-tag {
+  font-size: 12px; font-weight: 600; color: var(--cobalt);
+  background: var(--cobalt-pale);
+  border: 1px solid rgba(27,79,216,0.12);
+  border-radius: var(--radius-pill); padding: 5px 14px;
+}
+.completion-cta-wrap { animation: floatIn 0.6s 0.6s ease both; }
+
+/* ─── DOT NAV ─── */
+.dot-nav {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+  z-index: 100;
+  display: flex; gap: 6px; align-items: center;
+}
+.dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--border); transition: all 0.3s ease;
+}
+.dot.active {
+  background: var(--cobalt);
+  width: 20px; border-radius: 3px;
+}
+.dot.passed { background: rgba(27,79,216,0.3); }
+</style>
+</head>
+<body>
+
+<!-- Ambient background -->
+<div class="ambient">
+  <div class="amb amb-1"></div>
+  <div class="amb amb-2"></div>
+  <div class="amb amb-3"></div>
+  <div class="amb amb-4"></div>
+</div>
+<div class="grain"></div>
+
+<!-- Progress bar -->
+<div class="progress-wrap"><div class="progress-fill" id="progressFill"></div></div>
+
+<!-- Top bar -->
+<div class="topbar">
+  <div class="topbar-logo">WIRSHP</div>
+  <button class="topbar-skip" id="skipBtn" onclick="skipToEnd()">Skip questionnaire →</button>
+</div>
+
+<!-- Dot nav -->
+<div class="dot-nav" id="dotNav"></div>
+
+<!-- ─────────────────────────────────
+     SCREENS
+───────────────────────────────── -->
+<div class="screens" id="screens">
+
+  <!-- ═══ INTRO 0 ═══ -->
+  <div class="screen active" id="s0">
+    <div class="intro-wrap">
+      <div class="intro-eyebrow">Welcome to wirshp</div>
+      <div class="intro-headline">
+        Finding your<br>church home<br>starts <span class="accent">here.</span>
+      </div>
+      <div class="intro-body">
+        We know how personal this is. Whether you're exploring for the first time or looking for a better fit — you deserve more than a directory. You deserve a guide.
+      </div>
+      <button class="cta-primary" onclick="nextScreen()">
+        Begin your journey
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ INTRO 1 ═══ -->
+  <div class="screen out-right" id="s1">
+    <div class="intro-wrap">
+      <div class="intro-eyebrow">How it works</div>
+      <div class="intro-headline">
+        Ten questions.<br>Your <span class="accent">perfect</span><br>match.
+      </div>
+      <div class="intro-features">
+        <div class="intro-feat">
+          <div class="feat-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+          <div class="feat-text">
+            <strong>Rooted in your real values</strong>
+            <span>We ask about belonging, worship, and community — not just denomination. We meet you where you actually are.</span>
+          </div>
+        </div>
+        <div class="intro-feat">
+          <div class="feat-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="feat-text">
+            <strong>Judgment-free zone</strong>
+            <span>There's no right or wrong answer. No spiritual hierarchy. Just honest questions to help us understand you.</span>
+          </div>
+        </div>
+        <div class="intro-feat">
+          <div class="feat-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          </div>
+          <div class="feat-text">
+            <strong>Takes about 2–3 minutes</strong>
+            <span>One question at a time. Move at your own pace. You can always refine your answers later.</span>
+          </div>
+        </div>
+      </div>
+      <button class="cta-primary" onclick="nextScreen()">
+        I'm ready
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ INTRO 2 — TRUST ═══ -->
+  <div class="screen out-right" id="s2">
+    <div class="intro-wrap">
+      <div class="intro-eyebrow">A note before we begin</div>
+      <div class="intro-headline">
+        This is a<br>safe <span class="accent">space.</span>
+      </div>
+      <div class="intro-body">
+        Finding a church can carry a lot of weight — past experiences, unanswered questions, moments of doubt. We hold all of that gently here.
+      </div>
+      <div class="trust-note">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Your answers are private and only used to improve your matches.
+      </div>
+      <div class="intro-steps">
+        <div class="intro-step-item">
+          <div class="intro-step-num">1</div>
+          <span>Current state</span>
+        </div>
+        <div class="intro-step-divider"></div>
+        <div class="intro-step-item">
+          <div class="intro-step-num">2</div>
+          <span>Community</span>
+        </div>
+        <div class="intro-step-divider"></div>
+        <div class="intro-step-item">
+          <div class="intro-step-num">3</div>
+          <span>Worship</span>
+        </div>
+        <div class="intro-step-divider"></div>
+        <div class="intro-step-item">
+          <div class="intro-step-num">4</div>
+          <span>Beliefs</span>
+        </div>
+        <div class="intro-step-divider"></div>
+        <div class="intro-step-item">
+          <div class="intro-step-num">5</div>
+          <span>Practical</span>
+        </div>
+      </div>
+      <button class="cta-primary" onclick="nextScreen()">
+        Let's begin
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ Q1 — Where you are ═══ -->
+  <div class="screen out-right" id="s3">
+    <div class="glass-card">
+      <div class="q-counter" id="qc3"></div>
+      <div class="q-section">Section 1 — Current State</div>
+      <div class="q-title">Which best describes you right now?</div>
+      <div class="q-microcopy">There's no right answer — just the honest one.</div>
+      <div class="options-grid">
+        <div class="opt" onclick="selectOpt(this,'q1')">
+          <div class="opt-check"></div>
+          <div class="opt-label"><strong>Exploring faith for the first time</strong><span>Open, curious, not sure what to believe yet.</span></div>
+        </div>
+        <div class="opt" onclick="selectOpt(this,'q1')">
+          <div class="opt-check"></div>
+          <div class="opt-label"><strong>I've attended church before, not recently</strong><span>Ready to reconnect but unsure where to start.</span></div>
+        </div>
+        <div class="opt" onclick="selectOpt(this,'q1')">
+          <div class="opt-check"></div>
+          <div class="opt-label"><strong>I attend occasionally</strong><span>I go when I can, but haven't found my place.</span></div>
+        </div>
+        <div class="opt" onclick="selectOpt(this,'q1')">
+          <div class="opt-check"></div>
+          <div class="opt-label"><strong>Looking for a new church home</strong><span>Active in faith, searching for a better fit.</span></div>
+        </div>
+        <div class="opt" onclick="selectOpt(this,'q1')">
+          <div class="opt-check"></div>
+          <div class="opt-label"><strong>Active in church, considering a change</strong><span>Something shifted — I'm ready to explore.</span></div>
+        </div>
+      </div>
+      <div class="q-actions">
+        <button class="q-skip" onclick="nextScreen()">Skip</button>
+        <button class="cta-primary" onclick="nextScreen()">
+          Continue <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Q2 — What's bringing you ═══ -->
+  <div class="screen out-right" id="s4">
+    <div class="glass-card">
+      <div class="q-counter" id="qc4"></div>
+      <div class="q-section">Section 1 — Current State</div>
+      <div class="q-title">What's bringing you here today?</div>
+      <div class="q-sub">Select all that apply.</div>
+      <div class="chips-grid" id="q2-chips">
+        <div class="chip" onclick="toggleChip(this)">I want a church that aligns with my values</div>
+        <div class="chip" onclick="toggleChip(this)">I'm looking for community</div>
+        <div class="chip" onclick="toggleChip(this)">I'm going through a life transition</div>
+        <div class="chip" onclick="toggleChip(this)">I recently moved</div>
+        <div class="chip" onclick="toggleChip(this)">I'm curious about faith</div>
+        <div class="chip" onclick="toggleChip(this)">I want to raise my family in church</div>
+        <div class="chip" onclick="toggleChip(this)">I need a supportive community</div>
+        <div class="chip" onclick="toggleChip(this)">Something else</div>
+      </div>
+      <div class="q-actions">
+        <button class="q-skip" onclick="nextScreen()">Skip</button>
+        <button class="cta-primary" onclick="nextScreen()">
+          Continue <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Q3 — Community feel ═══ -->
+  <div class="screen out-right" id="s5">
+    <div class="glass-card">
+      <div class="q-counter" id="qc5"></div>
+      <div class="q-section">Section 2 — Belonging & Community</div>
+      <div class="q-title">What kind of community feels right to you?</div>
+      <div class="q-microcopy">Think about how you feel most at home.</div>
+      <div class="options-grid">
+        <div class="opt" onclick="selectOpt(this,'q3')">
+          <div class="opt-check"></div>
+          <svg class="opt-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+          <div class="opt-label"><strong>Small and intimate</strong><span>Everyone knows your name. Deep personal connection.</span></div>
+        </div>
+        <div class="opt" onclick="selectOpt(this,'q3')">
+          <div class="opt-check"></div>
+          <svg class="opt-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <div class="opt-label"><strong>Medium-sized and relational</strong><span>Enough variety to find your people. Still personal.</span></div>
+        </div>
+        <div class="opt" onclick="selectOpt(this,'q3')">
+          <div class="opt-check"></div>
+          <svg class="opt-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <div class="opt-label"><strong>Large and dynamic</strong><span>Energy of a crowd. Rich programs, lots of options.</span></div>
+        </div>
+        <div class="opt" onclick="selectOpt(this,'q3')">
+          <div class="opt-check"></div>
+          <svg class="opt-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div class="opt-label"><strong>Size doesn't matter to me</strong><span>The spirit of the community matters more than scale.</span></div>
+        </div>
+      </div>
+      <div class="q-actions">
+        <button class="q-skip" onclick="nextScreen()">Skip</button>
+        <button class="cta-primary" onclick="nextScreen()">
+          Continue <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Q4 — Community values ═══ -->
+  <div class="screen out-right" id="s6">
+    <div class="glass-card">
+      <div class="q-counter" id="qc6"></div>
+      <div class="q-section">Section 2 — Belonging & Community</div>
+      <div class="q-title">What matters most in a church community?</div>
+      <div class="q-sub">Select everything that resonates with you.</div>
+      <div class="chips-grid" id="q4-chips">
+        <div class="chip" onclick="toggleChip(this)">Feels welcoming to newcomers</div>
+        <div class="chip" onclick="toggleChip(this)">Diverse and inclusive leadership</div>
+        <div class="chip" onclick="toggleChip(this)">Active in social justice</div>
+        <div class="chip" onclick="toggleChip(this)">Small groups &amp; deep connection</div>
+        <div class="chip" onclick="toggleChip(this)">Strong Bible teaching</div>
+        <div class="chip" onclick="toggleChip(this)">Vibrant, expressive worship</div>
+        <div class="chip" onclick="toggleChip(this)">Family-friendly programming</div>
+        <div class="chip" onclick="toggleChip(this)">Multigenerational congregation</div>
+        <div class="chip" onclick="toggleChip(this)">Culturally specific community</div>
+        <div class="chip" onclick="toggleChip(this)">Strong newcomer welcome</div>
+      </div>
+      <div class="q-actions">
+        <button class="q-skip" onclick="nextScreen()">Skip</button>
+        <button class="cta-primary" onclick="nextScreen()">
+          Continue <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Q5 — Worship style ═══ -->
+  <div class="screen out-right" id="s7">
+    <div class="glass-card">
+      <div class="q-counter" id="qc7"></div>
+      <div class="q-section">Section 3 — Worship & Experience</div>
+      <div class="q-title">What kind of worship moves you?</div>
+      <div class="q-microcopy">Think about what you feel, not what you think you should feel.</div>
+      <div class="options-grid">
+        <div class="opt" onclick="selectOpt(this,'q5')">
+          <div class="opt-check"></div>
+          <div class="opt-label"><strong>Traditional</strong><span>Hymns, liturgy, a sense of sacred history.</span></div>
+        </div>
+        <div class="opt" onclick="selectOpt(this,'q5')">
+          <div class="opt-check"></div>
+          <div class="opt-label"><strong>Contemporary Gospel</strong><span>Band, modern music, expressive and energetic.</span></div>
+        </div>
+        <div class="opt" onclick="selectOpt(this,'q5')">
+          <div class="opt-check"></div>
+          <div class="opt-label"><strong>Blended</strong><span>A mix of old and new. The best of both.</span></div>
+        </div>
+        <div class="opt" onclick="selectOpt(this,'q5')">
+          <div class="opt-check"></div>
+          <div class="opt-label"><strong>Quiet and contemplative</strong><span>Meditative, reflective, space for stillness.</span></div>
+        </div>
+        <div class="opt" onclick="selectOpt(this,'q5')">
+          <div class="opt-check"></div>
+          <div class="opt-label"><strong>No strong preference</strong><span>Open to whatever feels authentic and alive.</span></div>
+        </div>
+      </div>
+      <div class="q-actions">
+        <button class="q-skip" onclick="nextScreen()">Skip</button>
+        <button class="cta-primary" onclick="nextScreen()">
+          Continue <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Q6 — Sermon style ═══ -->
+  <div class="screen out-right" id="s8">
+    <div class="glass-card">
+      <div class="q-counter" id="qc8"></div>
+      <div class="q-section">Section 3 — Worship & Experience</div>
+      <div class="q-title">How do you like to receive teaching?</div>
+      <div class="q-microcopy">What kind of sermon actually stays with you?</div>
+      <div class="options-grid">
+        <div class="opt" onclick="selectOpt(this,'q6')">
+          <div class="opt-check"></div>
+          <div class="opt-label"><strong>Expository — deep in the Bible</strong><span>Verse by verse. Rich, rooted, rigorous.</span></div>
+        </div>
+        <div class="opt" onclick="selectOpt(this,'q6')">
+          <div class="opt-check"></div>
+          <div class="opt-label"><strong>Practical life application</strong><span>Relevant to Monday morning. Real and useful.</span></div>
+        </div>
+        <div class="opt" onclick="selectOpt(this,'q6')">
+          <div class="opt-check"></div>
+          <div class="opt-label"><strong>Theological depth</strong><span>Engages my mind. I want to think and wrestle.</span></div>
+        </div>
+        <div class="opt" onclick="selectOpt(this,'q6')">
+          <div class="opt-check"></div>
+          <div class="opt-label"><strong>Conversational and warm</strong><span>Feels like someone speaking with me, not at me.</span></div>
+        </div>
+        <div class="opt" onclick="selectOpt(this,'q6')">
+          <div class="opt-check"></div>
+          <div class="opt-label"><strong>No preference</strong><span>Authenticity matters more than style.</span></div>
+        </div>
+      </div>
+      <div class="q-actions">
+        <button class="q-skip" onclick="nextScreen()">Skip</button>
+        <button class="cta-primary" onclick="nextScreen()">
+          Continue <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Q7 — Faith tradition ═══ -->
+  <div class="screen out-right" id="s9">
+    <div class="glass-card">
+      <div class="q-counter" id="qc9"></div>
+      <div class="q-section">Section 4 — Faith & Beliefs</div>
+      <div class="q-title">Do you identify with a particular tradition?</div>
+      <div class="q-sub">Optional — helps us understand your background, not define your future.</div>
+      <div class="chips-grid">
+        <div class="chip" onclick="selectChipSingle(this,'q7')">Baptist</div>
+        <div class="chip" onclick="selectChipSingle(this,'q7')">Catholic</div>
+        <div class="chip" onclick="selectChipSingle(this,'q7')">Pentecostal</div>
+        <div class="chip" onclick="selectChipSingle(this,'q7')">Non-denominational</div>
+        <div class="chip" onclick="selectChipSingle(this,'q7')">Orthodox</div>
+        <div class="chip" onclick="selectChipSingle(this,'q7')">Mainline Protestant</div>
+        <div class="chip" onclick="selectChipSingle(this,'q7')">AME / Black Church</div>
+        <div class="chip" onclick="selectChipSingle(this,'q7')">Not sure yet</div>
+        <div class="chip" onclick="selectChipSingle(this,'q7')">I'd rather not say</div>
+      </div>
+      <div class="q-actions">
+        <button class="q-skip" onclick="nextScreen()">Skip</button>
+        <button class="cta-primary" onclick="nextScreen()">
+          Continue <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Q8 — Doctrinal importance ═══ -->
+  <div class="screen out-right" id="s10">
+    <div class="glass-card">
+      <div class="q-counter" id="qc10"></div>
+      <div class="q-section">Section 4 — Faith & Beliefs</div>
+      <div class="q-title">How important is doctrinal alignment to you?</div>
+      <div class="q-sub">No judgment either way — this helps us weight your matches thoughtfully.</div>
+      <div class="scale-items">
+        <div class="scale-item" onclick="selectScale(this,'q8')">
+          <div class="scale-dot"></div>
+          <span class="scale-label">Not important — I care more about community and vibe</span>
+        </div>
+        <div class="scale-item" onclick="selectScale(this,'q8')">
+          <div class="scale-dot"></div>
+          <span class="scale-label">Somewhat important — I want alignment on the essentials</span>
+        </div>
+        <div class="scale-item" onclick="selectScale(this,'q8')">
+          <div class="scale-dot"></div>
+          <span class="scale-label">Very important — theological fit is a priority for me</span>
+        </div>
+      </div>
+      <br>
+      <div class="q-actions">
+        <button class="q-skip" onclick="nextScreen()">Skip</button>
+        <button class="cta-primary" onclick="nextScreen()">
+          Continue <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Q9 — Practical fit ═══ -->
+  <div class="screen out-right" id="s11">
+    <div class="glass-card">
+      <div class="q-counter" id="qc11"></div>
+      <div class="q-section">Section 5 — Practical Fit</div>
+      <div class="q-title">Let's talk logistics.</div>
+      <div class="q-sub">When can you come, and how far will you go?</div>
+
+      <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Service time</div>
+      <div class="chips-grid" style="margin-bottom:24px;">
+        <div class="chip" onclick="toggleChip(this)">Sunday morning</div>
+        <div class="chip" onclick="toggleChip(this)">Sunday evening</div>
+        <div class="chip" onclick="toggleChip(this)">Weekday</div>
+        <div class="chip" onclick="toggleChip(this)">Flexible</div>
+      </div>
+
+      <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Distance willing to travel</div>
+      <div class="chips-grid" style="margin-bottom:24px;">
+        <div class="chip" onclick="selectChipSingle(this,'dist')">Under 10 min</div>
+        <div class="chip" onclick="selectChipSingle(this,'dist')">10–20 min</div>
+        <div class="chip" onclick="selectChipSingle(this,'dist')">20–30 min</div>
+        <div class="chip" onclick="selectChipSingle(this,'dist')">Flexible</div>
+      </div>
+
+      <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Format preference</div>
+      <div class="chips-grid" style="margin-bottom:28px;">
+        <div class="chip" onclick="selectChipSingle(this,'format')">In-person</div>
+        <div class="chip" onclick="selectChipSingle(this,'format')">Online</div>
+        <div class="chip" onclick="selectChipSingle(this,'format')">Hybrid</div>
+      </div>
+
+      <div class="q-actions">
+        <button class="q-skip" onclick="nextScreen()">Skip</button>
+        <button class="cta-primary" onclick="nextScreen()">
+          Continue <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Q10 — Open text ═══ -->
+  <div class="screen out-right" id="s12">
+    <div class="glass-card">
+      <div class="q-counter" id="qc12"></div>
+      <div class="q-section">Optional — Your Voice</div>
+      <div class="q-title">What would make a church feel like home to you?</div>
+      <div class="q-sub">In your own words. No filters needed here.</div>
+      <textarea class="free-text" placeholder="A place where I don't have to have it all figured out. Where people remember my name. Where I can ask questions…" rows="5"></textarea>
+      <div class="q-actions">
+        <button class="q-skip" onclick="nextScreen()">Skip this one</button>
+        <button class="cta-primary" onclick="nextScreen()">
+          See my matches <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ COMPLETION ═══ -->
+  <div class="screen out-right" id="s13">
+    <div class="completion-wrap">
+      <div class="completion-glow">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>
+      </div>
+      <div class="intro-eyebrow">Your profile is ready</div>
+      <div class="completion-headline">Your matches<br>are waiting.</div>
+      <div class="completion-sub" id="completionSub">
+        We found churches in your area built for someone exactly like you. One of them could be home.
+      </div>
+      <div class="match-orbs">
+        <div class="orb"><img src="https://images.unsplash.com/photo-1519817914152-22d216bb9170?w=120&q=80&fit=crop" alt="church"></div>
+        <div class="orb"><img src="https://images.unsplash.com/photo-1566438480900-0609be27a4be?w=120&q=80&fit=crop" alt="church"></div>
+        <div class="orb"><img src="https://images.unsplash.com/photo-1523803326055-9729b9e02e5a?w=120&q=80&fit=crop" alt="church"></div>
+        <div class="orb"><img src="https://images.unsplash.com/photo-1548625149-720134b81b41?w=120&q=80&fit=crop" alt="church"></div>
+        <div class="orb-count">+20</div>
+      </div>
+      <div class="pref-tags" id="prefTags"></div>
+      <div class="completion-cta-wrap">
+        <button class="cta-primary" onclick="goToSignup()">
+          Create account to see matches
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+        </button>
+        <div style="margin-top:14px;font-size:12px;color:var(--muted);text-align:center;">
+          Free forever for seekers. No spam. No pressure.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /screens -->
+
+<script>
+// ─── State ───
+const TOTAL = 14; // screens 0–13
+let current = 0;
+const answers = {};
+
+// ─── Navigation ───
+function showScreen(idx, dir = 'forward') {
+  const screens = document.querySelectorAll('.screen');
+  screens.forEach((s, i) => {
+    s.classList.remove('active','out-left','out-right');
+    if (i === idx) s.classList.add('active');
+    else if (i < idx) s.classList.add('out-left');
+    else s.classList.add('out-right');
+  });
+  updateUI();
+}
+
+function nextScreen() {
+  if (current < TOTAL - 1) {
+    current++;
+    showScreen(current);
+  }
+}
+
+function goBack() {
+  if (current > 0) {
+    current--;
+    showScreen(current);
+  }
+}
+
+function skipToEnd() {
+  current = 13;
+  buildCompletion();
+  showScreen(13);
+}
+
+// ─── UI Updates ───
+function updateUI() {
+  // Progress bar — only during questionnaire (screens 3–12)
+  const qStart = 3, qEnd = 12;
+  let pct = 0;
+  if (current >= qStart && current <= qEnd) {
+    pct = ((current - qStart) / (qEnd - qStart + 1)) * 100;
+  } else if (current === 13) {
+    pct = 100;
+  }
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  // Skip button
+  const skipBtn = document.getElementById('skipBtn');
+  if (current === 0 || current === 13) {
+    skipBtn.classList.add('hidden');
+  } else {
+    skipBtn.classList.remove('hidden');
+  }
+
+  // Update dot nav
+  renderDots();
+
+  // Update step counters
+  const qScreens = [3,4,5,6,7,8,9,10,11,12];
+  qScreens.forEach((sid, qi) => {
+    const el = document.getElementById(`qc${sid}`);
+    if (el) el.textContent = `${qi + 1} / 10`;
+  });
+}
+
+// ─── Dot nav ───
+function renderDots() {
+  const nav = document.getElementById('dotNav');
+  // Only show during questionnaire + intro
+  if (current === 13) { nav.style.opacity = '0'; return; }
+  nav.style.opacity = '1';
+  nav.innerHTML = '';
+  const sections = [
+    {label:'intro', range:[0,1,2]},
+    {label:'q1', range:[3]},
+    {label:'q2', range:[4]},
+    {label:'q3', range:[5]},
+    {label:'q4', range:[6]},
+    {label:'q5', range:[7]},
+    {label:'q6', range:[8]},
+    {label:'q7', range:[9]},
+    {label:'q8', range:[10]},
+    {label:'q9', range:[11]},
+    {label:'q10', range:[12]},
+  ];
+  sections.forEach(sec => {
+    const dot = document.createElement('div');
+    dot.className = 'dot';
+    if (sec.range.includes(current)) dot.classList.add('active');
+    else if (sec.range[sec.range.length-1] < current) dot.classList.add('passed');
+    nav.appendChild(dot);
+  });
+}
+
+// ─── Answer interactions ───
+function selectOpt(el, group) {
+  const parent = el.closest('.options-grid');
+  parent.querySelectorAll('.opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  answers[group] = el.querySelector('strong')?.textContent || el.textContent.trim();
+}
+
+function toggleChip(el) {
+  el.classList.toggle('selected');
+}
+
+function selectChipSingle(el, group) {
+  // Find all chips in the same container
+  const parent = el.closest('.chips-grid');
+  parent.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  answers[group] = el.textContent.trim();
+}
+
+function selectScale(el, group) {
+  el.closest('.scale-items').querySelectorAll('.scale-item').forEach(i => i.classList.remove('selected'));
+  el.classList.add('selected');
+  answers[group] = el.querySelector('.scale-label').textContent.trim();
+}
+
+// ─── Completion ───
+function buildCompletion() {
+  const tags = [];
+
+  // Gather selected chips from all chip grids
+  document.querySelectorAll('.chips-grid .chip.selected').forEach(c => {
+    const t = c.textContent.trim();
+    if (t && tags.length < 6) tags.push(t);
+  });
+
+  // Gather radio selections
+  ['q1','q3','q5','q6','q7','q8','dist','format'].forEach(k => {
+    if (answers[k] && tags.length < 8) tags.push(answers[k]);
+  });
+
+  const container = document.getElementById('prefTags');
+  container.innerHTML = '';
+  const toShow = tags.slice(0,7);
+  if (toShow.length === 0) {
+    ['Seeking belonging','Worship fit','Community match'].forEach(t => {
+      const span = document.createElement('span');
+      span.className = 'pref-tag';
+      span.textContent = t;
+      container.appendChild(span);
+    });
+  } else {
+    toShow.forEach(t => {
+      const span = document.createElement('span');
+      span.className = 'pref-tag';
+      span.textContent = t;
+      container.appendChild(span);
+    });
+  }
+}
+
+function goToSignup() {
+  window.location.href = 'wirshp-auth.html';
+}
+
+// ─── Init ───
+updateUI();
+showScreen(0);
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'Enter' && document.activeElement.tagName !== 'TEXTAREA') {
+    if (current < TOTAL - 1 && current !== 13) {
+      if (current === 12) buildCompletion();
+      nextScreen();
+    }
+  }
+  if (e.key === 'ArrowLeft' && current > 0 && current !== 13) {
+    goBack();
+  }
+});
+
+// Build completion tags when arriving at screen 12 (last Q) or 13
+const origNext = nextScreen;
+window.nextScreen = function() {
+  if (current === 12) buildCompletion();
+  origNext();
+}
+</script>
+</body>
+</html>
